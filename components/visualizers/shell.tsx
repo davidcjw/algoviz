@@ -1,10 +1,24 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
-import { Pause, Play, RotateCcw, SkipBack, SkipForward, Shuffle } from "lucide-react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+  type ReactNode,
+} from "react";
+import { Code2, Eye, Pause, Play, RotateCcw, SkipBack, SkipForward, Shuffle } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { CodeBlock } from "@/components/CodeBlock";
+import type { CodeSnippet } from "@/lib/snippets";
 
 export type Accent = "ds" | "algo" | "sys";
+
+/** Topic Python snippets, injected by the <Visualizer> registry so the shell can
+ *  offer a "<>" code tab without every visualizer threading the prop through. */
+export const VizCodeContext = createContext<CodeSnippet[] | null>(null);
 
 export const ACCENT: Record<
   Accent,
@@ -55,30 +69,86 @@ export function VizShell({
   className?: string;
 }) {
   const a = ACCENT[accent];
+  const code = useContext(VizCodeContext);
+  const hasCode = !!code?.length;
+  const [view, setView] = useState<"viz" | "code">("viz");
+  const showCode = hasCode && view === "code";
+
   return (
     <div className="card overflow-hidden">
       <div className="flex items-center justify-between border-b border-line px-4 py-3">
-        <div className="flex items-center gap-2.5">
-          <span className={cn("h-2 w-2 rounded-full", a.bg)} />
-          <span className="font-mono text-xs uppercase tracking-wider text-slate-300">
+        <div className="flex min-w-0 items-center gap-2.5">
+          <span className={cn("h-2 w-2 shrink-0 rounded-full", a.bg)} />
+          <span className="truncate font-mono text-xs uppercase tracking-wider text-slate-300">
             {title}
           </span>
         </div>
-        <div className="font-mono text-2xs text-slate-400">{status}</div>
+        <div className="flex shrink-0 items-center gap-3">
+          {!showCode && status && (
+            <div className="hidden font-mono text-2xs text-slate-400 sm:block">{status}</div>
+          )}
+          {hasCode && (
+            <div className="flex items-center rounded-lg border border-line p-0.5">
+              <ViewTab active={view === "viz"} accent={accent} title="Visualization" onClick={() => setView("viz")}>
+                <Eye size={14} />
+              </ViewTab>
+              <ViewTab active={view === "code"} accent={accent} title="Python code" onClick={() => setView("code")}>
+                <Code2 size={14} />
+              </ViewTab>
+            </div>
+          )}
+        </div>
       </div>
 
-      <div className={cn("relative min-h-[260px] p-5 sm:p-6", className)}>{children}</div>
+      {showCode ? (
+        <div className="min-h-[260px]">
+          <CodeBlock snippets={code!} embedded />
+        </div>
+      ) : (
+        <div className={cn("relative min-h-[260px] p-5 sm:p-6", className)}>{children}</div>
+      )}
 
-      {legend && (
+      {legend && !showCode && (
         <div className="flex flex-wrap items-center gap-x-5 gap-y-2 border-t border-line px-4 py-2.5 font-mono text-2xs text-slate-400">
           {legend}
         </div>
       )}
 
-      {controls && (
+      {controls && !showCode && (
         <div className="border-t border-line bg-ink-900/40 px-4 py-3">{controls}</div>
       )}
     </div>
+  );
+}
+
+function ViewTab({
+  active,
+  accent,
+  title,
+  onClick,
+  children,
+}: {
+  active: boolean;
+  accent: Accent;
+  title: string;
+  onClick: () => void;
+  children: ReactNode;
+}) {
+  const a = ACCENT[accent];
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      title={title}
+      aria-label={title}
+      aria-pressed={active}
+      className={cn(
+        "grid h-7 w-8 place-items-center rounded-md transition-colors",
+        active ? cn(a.bg, "text-white") : "text-slate-400 hover:text-coal",
+      )}
+    >
+      {children}
+    </button>
   );
 }
 

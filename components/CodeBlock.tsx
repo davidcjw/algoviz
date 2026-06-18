@@ -2,7 +2,7 @@
 
 import { useState, type ReactNode } from "react";
 import { Check, Copy } from "lucide-react";
-import type { CodeSnippet } from "@/lib/content";
+import type { CodeSnippet } from "@/lib/snippets";
 import { cn } from "@/lib/utils";
 
 const KEYWORDS = new Set([
@@ -64,7 +64,14 @@ function highlight(code: string): ReactNode[] {
   return out;
 }
 
-export function CodeBlock({ snippets }: { snippets: CodeSnippet[] }) {
+export function CodeBlock({
+  snippets,
+  embedded = false,
+}: {
+  snippets: CodeSnippet[];
+  /** Drop the outer border/rounding so it sits flush inside another framed surface. */
+  embedded?: boolean;
+}) {
   const [active, setActive] = useState(0);
   const [copied, setCopied] = useState(false);
   const snippet = snippets[Math.min(active, snippets.length - 1)];
@@ -80,7 +87,14 @@ export function CodeBlock({ snippets }: { snippets: CodeSnippet[] }) {
   };
 
   return (
-    <div className="overflow-hidden rounded-xl border border-[#262b36] bg-[#13161d] shadow-[0_1px_2px_rgba(22,26,34,0.06)]">
+    <div
+      className={cn(
+        "overflow-hidden bg-[#13161d]",
+        embedded
+          ? "h-full"
+          : "rounded-xl border border-[#262b36] shadow-[0_1px_2px_rgba(22,26,34,0.06)]",
+      )}
+    >
       {/* tab + chrome bar */}
       <div className="flex items-stretch justify-between gap-2 border-b border-[#262b36] bg-[#161a22]">
         <div className="flex min-w-0 flex-1 overflow-x-auto">

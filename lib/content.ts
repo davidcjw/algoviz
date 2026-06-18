@@ -1,8 +1,4 @@
-import { CODE_SNIPPETS, type CodeSnippet } from "./snippets";
-
 export type Pillar = "data-structures" | "algorithms" | "system-design";
-
-export type { CodeSnippet };
 
 export type Difficulty = "Core" | "Intermediate" | "Advanced";
 
@@ -30,8 +26,6 @@ export interface Topic {
   useCases?: string[];
   /** Real interview-flavored gotchas. */
   pitfalls?: string[];
-  /** Python snippets for common operations, keyed by scenario. */
-  code?: CodeSnippet[];
 }
 
 export const PILLARS: Record<
@@ -762,11 +756,6 @@ export const TOPICS: Topic[] = [
     useCases: ["API abuse prevention", "Fair multi-tenant usage", "DDoS mitigation"],
   },
 ];
-
-// Attach Python snippets to their topics (kept in a separate file for readability).
-for (const t of TOPICS) {
-  if (CODE_SNIPPETS[t.slug]) t.code = CODE_SNIPPETS[t.slug];
-}
 
 export const TOPICS_BY_SLUG: Record<string, Topic> = Object.fromEntries(
   TOPICS.map((t) => [t.slug, t]),

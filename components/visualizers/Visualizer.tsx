@@ -26,6 +26,8 @@ import {
   RateLimitingViz,
 } from "./system";
 import type { SortKey } from "@/lib/algorithms/sorting";
+import { CODE_SNIPPETS } from "@/lib/snippets";
+import { VizCodeContext } from "./shell";
 
 const sortKeys: SortKey[] = [
   "bubble-sort",
@@ -36,6 +38,14 @@ const sortKeys: SortKey[] = [
 ];
 
 export function Visualizer({ slug }: { slug: string }) {
+  return (
+    <VizCodeContext.Provider value={CODE_SNIPPETS[slug] ?? null}>
+      {renderViz(slug)}
+    </VizCodeContext.Provider>
+  );
+}
+
+function renderViz(slug: string) {
   if (sortKeys.includes(slug as SortKey)) return <SortVisualizer algorithm={slug as SortKey} />;
 
   switch (slug) {

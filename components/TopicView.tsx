@@ -1,12 +1,11 @@
 import Link from "next/link";
-import { ArrowLeft, ArrowRight, Check, Code2, Lightbulb, TriangleAlert } from "lucide-react";
+import { ArrowLeft, ArrowRight, Check, Lightbulb, TriangleAlert } from "lucide-react";
 import { PILLARS, topicsByPillar, type Topic } from "@/lib/content";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { Background } from "@/components/Background";
 import { Reveal } from "@/components/Reveal";
 import { Visualizer } from "@/components/visualizers/Visualizer";
-import { CodeBlock } from "@/components/CodeBlock";
 import { cn } from "@/lib/utils";
 import { SITE_URL, absoluteUrl } from "@/lib/site";
 
@@ -198,20 +197,6 @@ export function TopicView({ topic }: { topic: Topic }) {
             )}
           </div>
         </div>
-
-        {/* code snippets */}
-        {topic.code && (
-          <Reveal>
-            <section className="mt-12">
-              <SectionLabel>
-                <Code2 size={13} className={at} /> In Python
-              </SectionLabel>
-              <div className="mt-4">
-                <CodeBlock snippets={topic.code} />
-              </div>
-            </section>
-          </Reveal>
-        )}
 
         {/* prev / next */}
         <nav className="mt-16 grid gap-4 border-t border-line pt-8 sm:grid-cols-2">
