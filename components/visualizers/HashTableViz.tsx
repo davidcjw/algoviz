@@ -88,7 +88,7 @@ export function HashTableViz() {
               initial={{ opacity: 0, y: -10, scale: 0.8 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, scale: 0.7 }}
-              className="rounded-lg border border-white/40 bg-white/10 px-4 py-1.5 font-mono text-sm text-white shadow-lg"
+              className="rounded-lg border border-white/40 bg-white/10 px-4 py-1.5 font-mono text-sm text-coal shadow-sm"
             >
               key {pending.key} → bucket {pending.bucket}
             </motion.div>
@@ -105,8 +105,8 @@ export function HashTableViz() {
                 className="grid h-9 w-9 shrink-0 place-items-center rounded-md border font-mono text-xs transition-all"
                 style={{
                   borderColor: targeted ? ACCENT.ds.raw : "rgba(148,163,184,0.18)",
-                  background: targeted ? "rgba(45,212,191,0.16)" : "rgba(12,17,29,0.6)",
-                  color: targeted ? "#fff" : "#64748b",
+                  background: targeted ? "rgba(15,118,110,0.16)" : "rgba(22,26,34,0.05)",
+                  color: targeted ? "#161A22" : "#64748b",
                   boxShadow: targeted ? `0 0 16px ${ACCENT.ds.raw}55` : "none",
                 }}
               >

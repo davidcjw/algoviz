@@ -35,7 +35,7 @@ export function Navbar() {
         <div
           className={cn(
             "flex items-center justify-between rounded-2xl px-4 py-2.5 transition-all duration-300",
-            scrolled ? "glass shadow-lg shadow-black/40" : "border border-transparent",
+            scrolled ? "glass shadow-sm shadow-coal/5" : "border border-transparent",
           )}
         >
           <Link href="/" className="group flex items-center gap-2.5">
@@ -50,7 +50,7 @@ export function Navbar() {
               <Link
                 key={l.label}
                 href={l.href}
-                className="rounded-lg px-3 py-2 text-sm text-slate-300 transition-colors hover:bg-white/5 hover:text-white"
+                className="rounded-lg px-3 py-2 text-sm text-slate-300 transition-colors hover:bg-white/5 hover:text-coal"
               >
                 {l.label}
               </Link>
@@ -60,7 +60,7 @@ export function Navbar() {
           <div className="flex items-center gap-2">
             <Link
               href="/learn"
-              className="hidden rounded-xl bg-white px-4 py-2 text-sm font-semibold text-ink transition-transform hover:scale-[1.03] active:scale-95 sm:block"
+              className="hidden rounded-xl bg-brand px-4 py-2 text-sm font-semibold text-white transition-transform hover:scale-[1.03] active:scale-95 sm:block"
             >
               Start learning
             </Link>
@@ -103,13 +103,13 @@ export function Navbar() {
 function Logo() {
   return (
     <svg width="30" height="30" viewBox="0 0 64 64" className="shrink-0">
-      <line x1="18" y1="20" x2="32" y2="38" stroke="#2DD4BF" strokeWidth="3" strokeLinecap="round" />
-      <line x1="46" y1="20" x2="32" y2="38" stroke="#A3E635" strokeWidth="3" strokeLinecap="round" />
-      <line x1="32" y1="38" x2="32" y2="50" stroke="#FBBF24" strokeWidth="3" strokeLinecap="round" />
-      <circle cx="18" cy="20" r="6" fill="#2DD4BF" />
-      <circle cx="46" cy="20" r="6" fill="#A3E635" />
-      <circle cx="32" cy="38" r="7" fill="#E7ECF5" />
-      <circle cx="32" cy="50" r="5" fill="#FBBF24" />
+      <line x1="18" y1="20" x2="32" y2="38" stroke="#0F766E" strokeWidth="3" strokeLinecap="round" />
+      <line x1="46" y1="20" x2="32" y2="38" stroke="#4D7C0F" strokeWidth="3" strokeLinecap="round" />
+      <line x1="32" y1="38" x2="32" y2="50" stroke="#B45309" strokeWidth="3" strokeLinecap="round" />
+      <circle cx="18" cy="20" r="6" fill="#0F766E" />
+      <circle cx="46" cy="20" r="6" fill="#4D7C0F" />
+      <circle cx="32" cy="38" r="7" fill="#161A22" />
+      <circle cx="32" cy="50" r="5" fill="#B45309" />
     </svg>
   );
 }

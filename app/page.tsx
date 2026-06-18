@@ -65,7 +65,7 @@ export default function Home() {
               <Reveal i={2}>
                 <p className="mt-6 max-w-xl text-pretty text-lg leading-relaxed text-slate-300">
                   The ultimate playground for data structures, algorithms, and system
-                  design. Don&apos;t grind problems — <em className="text-white not-italic">watch</em>{" "}
+                  design. Don&apos;t grind problems — <em className="text-coal not-italic">watch</em>{" "}
                   concepts come alive through animation, then build real intuition.
                 </p>
               </Reveal>
@@ -74,7 +74,7 @@ export default function Home() {
                 <div className="mt-9 flex flex-wrap items-center gap-3">
                   <Link
                     href="/learn"
-                    className="group inline-flex items-center gap-2 rounded-xl bg-white px-6 py-3.5 font-semibold text-ink transition-transform hover:scale-[1.03] active:scale-95"
+                    className="group inline-flex items-center gap-2 rounded-xl bg-brand px-6 py-3.5 font-semibold text-white transition-transform hover:scale-[1.03] active:scale-95"
                   >
                     Start exploring
                     <ArrowRight
@@ -84,7 +84,7 @@ export default function Home() {
                   </Link>
                   <Link
                     href="/data-structures/linked-list"
-                    className="inline-flex items-center gap-2 rounded-xl border border-line bg-white/5 px-6 py-3.5 font-semibold text-white backdrop-blur transition-colors hover:bg-white/10"
+                    className="inline-flex items-center gap-2 rounded-xl border border-line bg-white/5 px-6 py-3.5 font-semibold text-coal backdrop-blur transition-colors hover:bg-white/10"
                   >
                     <MousePointerClick size={18} className="text-ds" />
                     Try a visualizer
@@ -155,8 +155,7 @@ export default function Home() {
         {/* ───────────── Final CTA ───────────── */}
         <section className="relative z-10 mx-auto max-w-content px-4 py-20 sm:px-6">
           <Reveal>
-            <div className="relative overflow-hidden rounded-3xl border border-line bg-gradient-to-br from-ink-800 to-ink-900 px-6 py-16 text-center sm:px-12">
-              <div className="absolute -top-24 left-1/2 h-72 w-72 -translate-x-1/2 rounded-full bg-algo/15 blur-[120px]" />
+            <div className="relative overflow-hidden rounded-3xl border border-line bg-ink-900 px-6 py-16 text-center sm:px-12">
               <h2 className="relative mx-auto max-w-2xl text-balance text-3xl font-bold sm:text-4xl md:text-5xl">
                 Your next interview starts with{" "}
                 <span className="text-gradient">understanding</span>.
@@ -167,7 +166,7 @@ export default function Home() {
               </p>
               <Link
                 href="/learn"
-                className="group relative mt-8 inline-flex items-center gap-2 rounded-xl bg-white px-7 py-3.5 font-semibold text-ink transition-transform hover:scale-[1.03] active:scale-95"
+                className="group relative mt-8 inline-flex items-center gap-2 rounded-xl bg-brand px-7 py-3.5 font-semibold text-white transition-transform hover:scale-[1.03] active:scale-95"
               >
                 Browse all topics
                 <ArrowRight size={18} className="transition-transform group-hover:translate-x-1" />
@@ -185,7 +184,7 @@ export default function Home() {
 function Stat({ value, label }: { value: string; label: string }) {
   return (
     <div>
-      <dt className="font-display text-3xl font-extrabold text-white">{value}</dt>
+      <dt className="font-display text-3xl font-extrabold text-coal">{value}</dt>
       <dd className="mt-1 font-mono text-2xs uppercase tracking-wider text-slate-500">{label}</dd>
     </div>
   );

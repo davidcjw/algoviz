@@ -71,11 +71,11 @@ export function TopicView({ topic }: { topic: Topic }) {
         {/* breadcrumb */}
         <Reveal>
           <div className="flex items-center gap-2 font-mono text-2xs uppercase tracking-wider text-slate-500">
-            <Link href="/learn" className="transition-colors hover:text-white">
+            <Link href="/learn" className="transition-colors hover:text-coal">
               learn
             </Link>
             <span>/</span>
-            <Link href={`/learn?pillar=${topic.pillar}`} className={cn("transition-colors hover:text-white", at)}>
+            <Link href={`/learn?pillar=${topic.pillar}`} className={cn("transition-colors hover:text-coal", at)}>
               {pillar.name}
             </Link>
             <span>/</span>

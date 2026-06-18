@@ -85,11 +85,11 @@ export function SearchVisualizer({ mode }: { mode: "binary" | "linear" }) {
 
   const colorFor = (i: number) => {
     if (f.found === i) return ACCENT.algo.raw;
-    if (f.mid === i || f.cursor === i) return "#ffffff";
+    if (f.mid === i || f.cursor === i) return "#161A22";
     if (mode === "binary" && f.lo !== undefined && f.hi !== undefined && i >= f.lo && i <= f.hi)
       return "#38bdf8";
-    if (f.eliminated[i]) return "#1e2538";
-    return "#3f4a63";
+    if (f.eliminated[i]) return "#cbd5e1";
+    return "#94a3b8";
   };
 
   return (
@@ -100,8 +100,8 @@ export function SearchVisualizer({ mode }: { mode: "binary" | "linear" }) {
       legend={
         <>
           {mode === "binary" && <LegendDot color="#38bdf8" label="active range" />}
-          <LegendDot color="#ffffff" label={mode === "binary" ? "mid" : "cursor"} />
-          <LegendDot color="#1e2538" label="eliminated" />
+          <LegendDot color="#161A22" label={mode === "binary" ? "mid" : "cursor"} />
+          <LegendDot color="#cbd5e1" label="eliminated" />
           <LegendDot color={ACCENT.algo.raw} label="found" />
         </>
       }
@@ -136,9 +136,9 @@ export function SearchVisualizer({ mode }: { mode: "binary" | "linear" }) {
                 </div>
               )}
               <motion.div
-                animate={{ backgroundColor: c, boxShadow: isMid ? `0 0 16px ${c}` : "none" }}
-                className="grid h-11 w-9 place-items-center rounded-md font-mono text-sm font-semibold text-ink sm:h-12 sm:w-11"
-                style={{ color: c === "#1e2538" ? "#64748b" : "#0b0e16" }}
+                animate={{ backgroundColor: c, boxShadow: isMid ? "0 2px 10px rgba(22,26,34,0.20)" : "none" }}
+                className="grid h-11 w-9 place-items-center rounded-md font-mono text-sm font-semibold sm:h-12 sm:w-11"
+                style={{ color: c === "#161A22" || c === ACCENT.algo.raw ? "#f4f6f8" : "#1f2937" }}
               >
                 {v}
               </motion.div>

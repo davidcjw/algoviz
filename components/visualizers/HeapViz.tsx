@@ -125,11 +125,11 @@ export function HeapViz() {
                 layout
                 className="absolute grid h-10 w-10 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full border font-mono text-sm font-semibold"
                 animate={{
-                  borderColor: on ? "#fff" : "rgba(45,212,191,0.35)",
-                  backgroundColor: i === 0 ? "rgba(45,212,191,0.25)" : on ? "rgba(255,255,255,0.12)" : "rgba(18,24,38,0.85)",
-                  boxShadow: on ? `0 0 18px #ffffff66` : i === 0 ? `0 0 16px ${ACCENT.ds.raw}55` : "none",
+                  borderColor: on ? "#161A22" : "rgba(15,118,110,0.35)",
+                  backgroundColor: i === 0 ? "rgba(15,118,110,0.25)" : on ? "rgba(22,26,34,0.10)" : "rgba(22,26,34,0.05)",
+                  boxShadow: on ? `0 0 18px rgba(22,26,34,0.28)` : i === 0 ? `0 0 16px ${ACCENT.ds.raw}55` : "none",
                 }}
-                style={{ left: x, top: y, color: "#fff" }}
+                style={{ left: x, top: y, color: "#161A22" }}
               >
                 {v}
               </motion.div>
@@ -145,10 +145,10 @@ export function HeapViz() {
           <div key={i} className="flex flex-col items-center">
             <motion.div
               animate={{
-                backgroundColor: hi.includes(i) ? "rgba(255,255,255,0.14)" : "rgba(12,17,29,0.6)",
-                borderColor: hi.includes(i) ? "#fff" : "rgba(148,163,184,0.18)",
+                backgroundColor: hi.includes(i) ? "rgba(22,26,34,0.10)" : "rgba(22,26,34,0.05)",
+                borderColor: hi.includes(i) ? "#161A22" : "rgba(148,163,184,0.18)",
               }}
-              className="grid h-8 w-8 place-items-center rounded border font-mono text-xs text-white"
+              className="grid h-8 w-8 place-items-center rounded border font-mono text-xs text-coal"
             >
               {v}
             </motion.div>

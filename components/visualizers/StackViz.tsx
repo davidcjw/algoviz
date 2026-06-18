@@ -73,8 +73,8 @@ export function StackViz() {
                 className="grid h-12 w-44 place-items-center rounded-lg border font-mono text-base font-semibold"
                 style={{
                   borderColor: isTop ? ACCENT.ds.raw : "rgba(148,163,184,0.18)",
-                  background: isTop ? "rgba(45,212,191,0.12)" : "rgba(18,24,38,0.7)",
-                  color: "#fff",
+                  background: isTop ? "rgba(15,118,110,0.12)" : "rgba(22,26,34,0.05)",
+                  color: "#161A22",
                   boxShadow: isTop ? `0 0 18px ${ACCENT.ds.raw}44` : "none",
                 }}
               >

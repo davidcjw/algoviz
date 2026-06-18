@@ -74,7 +74,7 @@ export function RecursionViz() {
       status={`step ${index + 1} / ${frames.length}`}
       legend={
         <>
-          <LegendDot color="#ffffff" label="on call stack" />
+          <LegendDot color="#161A22" label="on call stack" />
           <LegendDot color={ACCENT.algo.raw} label="returned" />
           <LegendDot color="#3f4a63" label="pending" />
         </>
@@ -89,7 +89,7 @@ export function RecursionViz() {
                 n.children.map((c) => {
                   const lit = f.active.includes(n.id) && f.active.includes(c.id);
                   return (
-                    <line key={`${n.id}-${c.id}`} x1={px(n.x)} y1={py(n.y)} x2={px(c.x)} y2={py(c.y)} stroke={lit ? "#fff" : "rgba(148,163,184,0.2)"} strokeWidth={lit ? 2.5 : 1.5} />
+                    <line key={`${n.id}-${c.id}`} x1={px(n.x)} y1={py(n.y)} x2={px(c.x)} y2={py(c.y)} stroke={lit ? "#161A22" : "rgba(148,163,184,0.2)"} strokeWidth={lit ? 2.5 : 1.5} />
                   );
                 }),
               )}
@@ -105,10 +105,10 @@ export function RecursionViz() {
                   animate={{
                     opacity: visible ? 1 : 0.18,
                     scale: active ? 1.12 : 1,
-                    borderColor: active ? "#fff" : ret ? ACCENT.algo.raw : "rgba(148,163,184,0.3)",
-                    backgroundColor: active ? "rgba(255,255,255,0.16)" : ret ? "rgba(163,230,53,0.16)" : "rgba(18,24,38,0.85)",
+                    borderColor: active ? "#161A22" : ret ? ACCENT.algo.raw : "rgba(148,163,184,0.3)",
+                    backgroundColor: active ? "rgba(22,26,34,0.10)" : ret ? "rgba(77,124,15,0.16)" : "rgba(22,26,34,0.05)",
                   }}
-                  className="absolute grid h-9 w-9 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full border font-mono text-2xs font-semibold text-white"
+                  className="absolute grid h-9 w-9 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full border font-mono text-2xs font-semibold text-coal"
                   style={{ left: px(n.x), top: py(n.y) }}
                 >
                   {ret ? f.returned[n.id] : n.n}
@@ -128,7 +128,7 @@ export function RecursionViz() {
                 layout
                 initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
-                className="rounded-md border border-white/30 bg-white/5 px-3 py-1.5 font-mono text-xs text-white"
+                className="rounded-md border border-white/30 bg-white/5 px-3 py-1.5 font-mono text-xs text-coal"
               >
                 fib({posMap.get(id)?.n})
               </motion.div>

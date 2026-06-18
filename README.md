@@ -29,18 +29,18 @@ The ultimate **visual** playground for mastering data structures, algorithms, an
 ### Data Structures (teal)
 Array · Linked List · Doubly Linked List · Stack · Queue · Hash Table · Binary Search Tree · Heap / Priority Queue · Trie · Graph · Union-Find (DSU)
 
-### Algorithms (lime)
+### Algorithms (olive)
 Bubble / Selection / Insertion / Merge / Quick Sort · Linear & Binary Search · BFS · DFS · Dijkstra · Two Pointers · Sliding Window · Recursion & the Call Stack · Backtracking (N-Queens) · Dynamic Programming
 
-### System Design (amber)
-Load Balancing · Caching · Sharding · Consistent Hashing · Message Queues · Rate Limiting
+### System Design (ochre)
+Load Balancing · Caching (cache-aside / read-through / write-through / write-behind) · Sharding · Consistent Hashing · Message Queues · Rate Limiting (token bucket / leaky bucket / fixed & sliding window)
 
 Every topic ships with a hands-on visualizer (play / step / shuffle / speed controls or direct manipulation), a Big-O complexity table, mental models, real use cases, and common pitfalls.
 
 ## Design
 
-- **Aesthetic:** dark "algorithmic observatory" — near-black ink, engineering grid, grain, and glow.
-- **Color system:** three signature accents map to the three pillars (teal / lime / amber).
+- **Aesthetic:** light editorial "paper" — warm off-white canvas, near-black ink, a single ink-blue accent, hairline rules, and a faint engineering grid. No gradients or neon glow.
+- **Color system:** one restrained brand accent (ink-blue) plus three muted pillar tags (teal / olive / ochre).
 - **Type:** Bricolage Grotesque (display) · Sora (body) · JetBrains Mono (code).
 - **Motion:** Framer Motion throughout — `layout` animations for reordering, `AnimatePresence` for inserts/removes, frame-players for step-through algorithms. Respects `prefers-reduced-motion`.
 

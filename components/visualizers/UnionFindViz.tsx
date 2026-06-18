@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import { VizShell, ACCENT } from "./shell";
 
 const N = 8;
-const COLORS = ["#2DD4BF", "#A3E635", "#FBBF24", "#f472b6", "#38bdf8", "#c084fc", "#fb923c", "#4ade80"];
+const COLORS = ["#0F766E", "#4D7C0F", "#B45309", "#f472b6", "#38bdf8", "#c084fc", "#fb923c", "#4ade80"];
 
 const pos = (i: number) => ({ x: 60 + (i % 4) * 100, y: i < 4 ? 70 : 165 });
 
@@ -89,7 +89,7 @@ export function UnionFindViz() {
                 key={`e-${i}`}
                 initial={false}
                 animate={{ x1: a.x, y1: a.y, x2: b.x, y2: b.y }}
-                stroke={flash.includes(i) ? "#fff" : "rgba(148,163,184,0.4)"}
+                stroke={flash.includes(i) ? "#161A22" : "rgba(148,163,184,0.5)"}
                 strokeWidth={flash.includes(i) ? 2.5 : 1.5}
                 markerEnd="url(#uf-arrow)"
               />
@@ -108,7 +108,7 @@ export function UnionFindViz() {
             return (
               <g key={i}>
                 <motion.circle cx={x} cy={y} r="18" animate={{ fill: c, scale: lit ? 1.15 : 1 }}
-                  stroke={isRoot ? "#fff" : "rgba(11,14,22,0.8)"} strokeWidth={isRoot ? 2.5 : 2} style={{ transformOrigin: `${x}px ${y}px` }} />
+                  stroke={isRoot ? "#161A22" : "rgba(22,26,34,0.45)"} strokeWidth={isRoot ? 2.5 : 2} style={{ transformOrigin: `${x}px ${y}px` }} />
                 <text x={x} y={y + 4} textAnchor="middle" fontSize="13" fontWeight="700" fill="#06121f" className="font-mono">{i}</text>
               </g>
             );

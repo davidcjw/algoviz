@@ -56,7 +56,7 @@ export function PillarCards() {
                 <div className="flex items-start justify-between">
                   <span className={`font-mono text-4xl ${a.text}`}>{s.glyph}</span>
                   <ArrowUpRight
-                    className="text-slate-500 transition-all duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-white"
+                    className="text-slate-500 transition-all duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-coal"
                     size={22}
                   />
                 </div>

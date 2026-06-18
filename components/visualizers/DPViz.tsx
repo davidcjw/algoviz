@@ -48,12 +48,12 @@ export function DPViz() {
         {f.dp.map((v, i) => {
           const dep = f.deps.includes(i);
           const cur = f.current === i;
-          let bg = "rgba(12,17,29,0.6)";
+          let bg = "rgba(22,26,34,0.05)";
           let border = "rgba(148,163,184,0.18)";
           let color = "#64748b";
-          if (cur) { bg = "rgba(163,230,53,0.18)"; border = ACCENT.algo.raw; color = "#fff"; }
-          else if (dep) { bg = "rgba(56,189,248,0.16)"; border = "#38bdf8"; color = "#fff"; }
-          else if (v !== null) { color = "#e7ecf5"; }
+          if (cur) { bg = "rgba(77,124,15,0.18)"; border = ACCENT.algo.raw; color = "#161A22"; }
+          else if (dep) { bg = "rgba(56,189,248,0.16)"; border = "#38bdf8"; color = "#161A22"; }
+          else if (v !== null) { color = "#161A22"; }
           return (
             <div key={i} className="relative flex flex-col items-center">
               {cur && f.deps.length > 0 && (

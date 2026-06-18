@@ -70,7 +70,7 @@ export function ArrayViz() {
               max={cells.length}
               value={insertAt}
               onChange={(e) => setInsertAt(Math.max(0, Math.min(cells.length, Number(e.target.value))))}
-              className="w-10 bg-transparent font-mono text-sm text-white outline-none"
+              className="w-10 bg-transparent font-mono text-sm text-coal outline-none"
             />
           </div>
           <button
@@ -104,9 +104,9 @@ export function ArrayViz() {
                   className="relative grid h-14 w-14 place-items-center rounded-lg border font-mono text-lg font-semibold transition-all"
                   style={{
                     borderColor: active ? ACCENT.ds.raw : "rgba(148,163,184,0.18)",
-                    background: active ? "rgba(45,212,191,0.14)" : "rgba(18,24,38,0.7)",
+                    background: active ? "rgba(15,118,110,0.14)" : "rgba(22,26,34,0.05)",
                     boxShadow: active ? `0 0 22px ${ACCENT.ds.raw}55` : "none",
-                    color: active ? "#fff" : "#e7ecf5",
+                    color: active ? "#161A22" : "#161A22",
                   }}
                 >
                   {cell.value}

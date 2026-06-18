@@ -677,7 +677,9 @@ export const TOPICS: Topic[] = [
     difficulty: "Intermediate",
     live: true,
     insights: [
-      "A cache hit skips the database; a miss falls through and back-fills.",
+      "Cache-aside: the app reads the DB on a miss and back-fills the cache itself.",
+      "Read-through: the cache loads from the DB transparently — the app only sees the cache.",
+      "Write-through keeps cache and DB consistent; write-behind acks first and flushes async (faster, riskier).",
       "Eviction (LRU/LFU/TTL) decides what to drop when the cache is full.",
       "Stale data is the price of speed — invalidation is the hard part.",
     ],
@@ -746,7 +748,9 @@ export const TOPICS: Topic[] = [
     live: true,
     insights: [
       "Token bucket refills at a fixed rate and allows controlled bursts.",
-      "Leaky bucket smooths output to a constant drain rate.",
+      "Leaky bucket queues requests and drains at a constant rate, smoothing output.",
+      "Fixed window is cheap but lets a boundary burst hit up to 2× the limit.",
+      "Sliding window counts the trailing interval — fairer, but tracks more state.",
       "Limits live at the edge (API gateway) keyed by IP, user, or API key.",
     ],
     useCases: ["API abuse prevention", "Fair multi-tenant usage", "DDoS mitigation"],

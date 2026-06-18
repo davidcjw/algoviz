@@ -50,11 +50,11 @@ function buildFrames(): Frame[] {
 }
 
 const statusColor: Record<Frame["status"], string> = {
-  try: "#ffffff",
-  place: "#A3E635",
+  try: "#161A22",
+  place: "#4D7C0F",
   conflict: "#ef4444",
   backtrack: "#fb923c",
-  solved: "#A3E635",
+  solved: "#4D7C0F",
 };
 
 export function BacktrackingViz() {
@@ -70,7 +70,7 @@ export function BacktrackingViz() {
       status={`step ${index + 1} / ${frames.length}`}
       legend={
         <>
-          <LegendDot color="#A3E635" label="placed / safe" />
+          <LegendDot color="#4D7C0F" label="placed / safe" />
           <LegendDot color="#ef4444" label="conflict" />
           <LegendDot color="#fb923c" label="backtrack" />
         </>

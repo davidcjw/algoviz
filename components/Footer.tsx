@@ -66,7 +66,7 @@ function FooterCol({ title, links }: { title: string; links: [string, string][] 
           <li key={label}>
             <Link
               href={href}
-              className="text-sm text-slate-300 transition-colors hover:text-white"
+              className="text-sm text-slate-300 transition-colors hover:text-coal"
             >
               {label}
             </Link>

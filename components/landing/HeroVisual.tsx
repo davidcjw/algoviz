@@ -20,14 +20,14 @@ function makeBars(seed: number): Bar[] {
 }
 
 function barColor(value: number) {
-  // teal → lime → amber gradient across the value range
+  // muted teal → olive → ochre gradient across the value range
   const t = (value - 1) / (COUNT - 1);
   if (t < 0.5) {
     const k = t / 0.5;
-    return lerpColor([45, 212, 191], [163, 230, 53], k);
+    return lerpColor([15, 118, 110], [77, 124, 15], k);
   }
   const k = (t - 0.5) / 0.5;
-  return lerpColor([163, 230, 53], [251, 191, 36], k);
+  return lerpColor([77, 124, 15], [180, 83, 9], k);
 }
 function lerpColor(a: number[], b: number[], t: number) {
   const c = a.map((v, i) => Math.round(v + (b[i] - v) * t));
@@ -86,10 +86,7 @@ export function HeroVisual() {
 
   return (
     <div className="relative">
-      {/* glow base */}
-      <div className="absolute -inset-6 -z-10 rounded-[2rem] bg-gradient-to-br from-ds/20 via-algo/10 to-sys/20 blur-2xl" />
-
-      <div className="card overflow-hidden p-1 shadow-2xl shadow-black/50">
+      <div className="card overflow-hidden p-1 shadow-lg shadow-coal/5">
         {/* terminal chrome */}
         <div className="flex items-center justify-between border-b border-line px-4 py-2.5">
           <div className="flex items-center gap-1.5">
@@ -119,18 +116,14 @@ export function HeroVisual() {
                   background: isSorted
                     ? barColor(bar.value)
                     : `${barColor(bar.value)}`,
-                  opacity: isActive ? 1 : isSorted ? 1 : 0.78,
-                  boxShadow: isActive
-                    ? `0 0 22px ${barColor(bar.value)}`
-                    : isSorted
-                      ? `0 0 10px ${barColor(bar.value)}55`
-                      : "none",
+                  opacity: isActive ? 1 : isSorted ? 1 : 0.7,
+                  boxShadow: isActive ? "0 2px 10px rgba(22,26,34,0.18)" : "none",
                 }}
               >
                 {isActive && (
                   <motion.span
                     layoutId="scan-dot"
-                    className="absolute -top-3 left-1/2 h-1.5 w-1.5 -translate-x-1/2 rounded-full bg-white"
+                    className="absolute -top-3 left-1/2 h-1.5 w-1.5 -translate-x-1/2 rounded-full bg-brand"
                   />
                 )}
               </motion.div>

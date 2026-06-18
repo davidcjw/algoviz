@@ -145,8 +145,8 @@ export function GraphViz({ mode = "explore" }: { mode?: GMode }) {
   const f = frames[index];
 
   const nodeColor = (id: string) => {
-    if (f.path?.includes(id)) return "#A3E635";
-    if (f.current === id) return "#ffffff";
+    if (f.path?.includes(id)) return "#4D7C0F";
+    if (f.current === id) return "#161A22";
     if (f.visited.includes(id)) return ACCENT[accent].raw;
     if (f.frontier.includes(id)) return "#38bdf8";
     return "#3f4a63";
@@ -163,9 +163,9 @@ export function GraphViz({ mode = "explore" }: { mode?: GMode }) {
       legend={
         <>
           <LegendDot color="#38bdf8" label={algo === "dijkstra" ? "in queue" : "frontier"} />
-          <LegendDot color="#ffffff" label="current" />
+          <LegendDot color="#161A22" label="current" />
           <LegendDot color={ACCENT[accent].raw} label="visited" />
-          {algo === "dijkstra" && <LegendDot color="#A3E635" label="shortest path" />}
+          {algo === "dijkstra" && <LegendDot color="#4D7C0F" label="shortest path" />}
         </>
       }
       controls={
@@ -185,7 +185,7 @@ export function GraphViz({ mode = "explore" }: { mode?: GMode }) {
                   <button
                     key={m}
                     onClick={() => { setAlgo(m); reset(); setIndex(0); }}
-                    className={`rounded-md px-2.5 py-1 font-mono text-2xs uppercase transition-colors ${algo === m ? "bg-algo text-ink" : "bg-white/5 text-slate-300 hover:bg-white/10"}`}
+                    className={`rounded-md px-2.5 py-1 font-mono text-2xs uppercase transition-colors ${algo === m ? "bg-algo text-white" : "bg-white/5 text-slate-300 hover:bg-white/10"}`}
                   >
                     {m}
                   </button>
@@ -207,7 +207,7 @@ export function GraphViz({ mode = "explore" }: { mode?: GMode }) {
               <g key={`${a}${b}`}>
                 <line
                   x1={na.x} y1={na.y} x2={nb.x} y2={nb.y}
-                  stroke={inPath ? "#A3E635" : on ? "#ffffff" : "rgba(148,163,184,0.25)"}
+                  stroke={inPath ? "#4D7C0F" : on ? "#161A22" : "rgba(100,116,139,0.30)"}
                   strokeWidth={on ? 3 : 2}
                 />
                 {weighted && (
@@ -221,17 +221,17 @@ export function GraphViz({ mode = "explore" }: { mode?: GMode }) {
           })}
           {NODES.map((n) => {
             const c = nodeColor(n.id);
-            const light = c === "#ffffff" || c === "#A3E635" || c === ACCENT[accent].raw;
+            const light = c === "#38bdf8";
             return (
               <g key={n.id}>
                 <motion.circle
                   cx={n.x} cy={n.y} r="20"
-                  animate={{ fill: c, filter: f.current === n.id ? "drop-shadow(0 0 8px #fff)" : "none" }}
-                  stroke="rgba(255,255,255,0.15)" strokeWidth="1.5"
+                  animate={{ fill: c, filter: f.current === n.id ? "drop-shadow(0 0 6px rgba(22,26,34,0.45))" : "none" }}
+                  stroke="rgba(22,26,34,0.15)" strokeWidth="1.5"
                 />
-                <text x={n.x} y={n.y + 4.5} textAnchor="middle" fontSize="13" fontWeight="700" fill={light ? "#06121f" : "#e7ecf5"} className="font-mono">{n.id}</text>
+                <text x={n.x} y={n.y + 4.5} textAnchor="middle" fontSize="13" fontWeight="700" fill={light ? "#06121f" : "#f4f6f8"} className="font-mono">{n.id}</text>
                 {f.dist && (
-                  <text x={n.x} y={n.y - 27} textAnchor="middle" fontSize="10" className="fill-slate-400 font-mono">
+                  <text x={n.x} y={n.y - 27} textAnchor="middle" fontSize="10" className="fill-slate-600 font-mono">
                     {f.dist[n.id] === Infinity ? "∞" : f.dist[n.id]}
                   </text>
                 )}

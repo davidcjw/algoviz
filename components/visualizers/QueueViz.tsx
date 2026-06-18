@@ -75,9 +75,9 @@ export function QueueViz() {
                 transition={{ type: "spring", stiffness: 460, damping: 30 }}
                 className="grid h-14 w-14 shrink-0 place-items-center rounded-lg border font-mono text-base font-semibold"
                 style={{
-                  borderColor: isFront ? ACCENT.ds.raw : isBack ? "rgba(94,234,212,0.4)" : "rgba(148,163,184,0.18)",
-                  background: isFront ? "rgba(45,212,191,0.14)" : "rgba(18,24,38,0.7)",
-                  color: "#fff",
+                  borderColor: isFront ? ACCENT.ds.raw : isBack ? "rgba(15,118,110,0.4)" : "rgba(148,163,184,0.18)",
+                  background: isFront ? "rgba(15,118,110,0.14)" : "rgba(22,26,34,0.05)",
+                  color: "#161A22",
                   boxShadow: isFront ? `0 0 18px ${ACCENT.ds.raw}44` : "none",
                 }}
               >

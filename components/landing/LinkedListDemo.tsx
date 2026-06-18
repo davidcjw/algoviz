@@ -51,7 +51,7 @@ export function LinkedListDemo() {
               className="flex items-center"
             >
               <div className="flex overflow-hidden rounded-lg border border-ds/40 bg-ink-700/70 font-mono text-sm shadow-lg shadow-ds/10">
-                <span className="px-3 py-2 font-semibold text-white">{v}</span>
+                <span className="px-3 py-2 font-semibold text-coal">{v}</span>
                 <span className="grid place-items-center border-l border-ds/30 bg-ds/10 px-2 text-ds">
                   ●
                 </span>
@@ -82,8 +82,8 @@ function Arrow({ last }: { last: boolean }) {
       viewBox="0 0 34 20"
       className="origin-left"
     >
-      <line x1="0" y1="10" x2="26" y2="10" stroke={last ? "#475569" : "#2DD4BF"} strokeWidth="2" />
-      <path d="M26 5 L33 10 L26 15 Z" fill={last ? "#475569" : "#2DD4BF"} />
+      <line x1="0" y1="10" x2="26" y2="10" stroke={last ? "#475569" : "#0F766E"} strokeWidth="2" />
+      <path d="M26 5 L33 10 L26 15 Z" fill={last ? "#475569" : "#0F766E"} />
     </motion.svg>
   );
 }

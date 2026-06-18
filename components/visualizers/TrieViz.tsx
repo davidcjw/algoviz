@@ -157,10 +157,10 @@ export function TrieViz() {
                 style={{
                   left: px(p.x),
                   top: py(p.y),
-                  borderColor: on ? ACCENT.ds.raw : p.node.end ? "rgba(163,230,53,0.6)" : "rgba(148,163,184,0.3)",
-                  background: isRoot ? "rgba(148,163,184,0.15)" : on ? "rgba(45,212,191,0.22)" : "rgba(18,24,38,0.85)",
-                  color: "#fff",
-                  boxShadow: on ? `0 0 16px ${ACCENT.ds.raw}66` : p.node.end ? "0 0 10px rgba(163,230,53,0.4)" : "none",
+                  borderColor: on ? ACCENT.ds.raw : p.node.end ? "rgba(77,124,15,0.6)" : "rgba(148,163,184,0.3)",
+                  background: isRoot ? "rgba(148,163,184,0.15)" : on ? "rgba(15,118,110,0.22)" : "rgba(22,26,34,0.05)",
+                  color: "#161A22",
+                  boxShadow: on ? `0 0 16px ${ACCENT.ds.raw}66` : p.node.end ? "0 0 10px rgba(77,124,15,0.4)" : "none",
                 }}
               >
                 {isRoot ? "•" : p.node.char}

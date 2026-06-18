@@ -163,9 +163,9 @@ export function BSTViz() {
                 style={{
                   left: px(p.x),
                   top: py(p.y),
-                  borderColor: isTarget ? "#fff" : on ? ACCENT.ds.raw : "rgba(45,212,191,0.35)",
-                  background: isTarget ? ACCENT.ds.raw : on ? "rgba(45,212,191,0.2)" : "rgba(18,24,38,0.85)",
-                  color: isTarget ? "#06251f" : "#fff",
+                  borderColor: isTarget ? "#161A22" : on ? ACCENT.ds.raw : "rgba(15,118,110,0.35)",
+                  background: isTarget ? ACCENT.ds.raw : on ? "rgba(15,118,110,0.2)" : "rgba(22,26,34,0.05)",
+                  color: isTarget ? "#f4f6f8" : "#161A22",
                   boxShadow: on ? `0 0 18px ${ACCENT.ds.raw}66` : "none",
                 }}
               >

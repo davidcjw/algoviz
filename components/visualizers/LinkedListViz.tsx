@@ -88,11 +88,11 @@ export function LinkedListViz({ variant = "singly" }: { variant?: "singly" | "do
                 <div
                   className="flex overflow-hidden rounded-lg border shadow-lg transition-all"
                   style={{
-                    borderColor: active === node.id ? arrowColor : "rgba(45,212,191,0.3)",
+                    borderColor: active === node.id ? arrowColor : "rgba(15,118,110,0.3)",
                     boxShadow: active === node.id ? `0 0 22px ${arrowColor}66` : "none",
                   }}
                 >
-                  <span className="grid place-items-center bg-ink-700/80 px-4 py-3 font-mono text-base font-semibold text-white">
+                  <span className="grid place-items-center bg-ink-700/80 px-4 py-3 font-mono text-base font-semibold text-coal">
                     {node.value}
                   </span>
                   <span className="grid place-items-center border-l border-ds/30 bg-ds/10 px-2.5 font-mono text-2xs text-ds">

@@ -16,7 +16,7 @@ export const ACCENT: Record<
     border: "border-ds/40",
     ring: "ring-ds/40",
     glow: "glow-ds",
-    raw: "#2DD4BF",
+    raw: "#0F766E",
   },
   algo: {
     text: "text-algo",
@@ -24,7 +24,7 @@ export const ACCENT: Record<
     border: "border-algo/40",
     ring: "ring-algo/40",
     glow: "glow-algo",
-    raw: "#A3E635",
+    raw: "#4D7C0F",
   },
   sys: {
     text: "text-sys",
@@ -32,7 +32,7 @@ export const ACCENT: Record<
     border: "border-sys/40",
     ring: "ring-sys/40",
     glow: "glow-sys",
-    raw: "#FBBF24",
+    raw: "#B45309",
   },
 };
 
@@ -118,7 +118,7 @@ export function ControlButton({
       className={cn(
         "grid h-9 w-9 place-items-center rounded-lg border border-line bg-white/5 text-slate-200 transition-all",
         "hover:bg-white/10 active:scale-90 disabled:cursor-not-allowed disabled:opacity-30",
-        active && cn(a.bg, "border-transparent text-ink hover:opacity-90"),
+        active && cn(a.bg, "border-transparent text-white hover:opacity-90"),
       )}
     >
       {children}

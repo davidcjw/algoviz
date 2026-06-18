@@ -89,11 +89,11 @@ export function PatternViz({ mode }: { mode: "two-pointers" | "sliding-window" }
           const inBest = mode === "sliding-window" && i >= f.best[0] && i <= f.best[1];
           const isPtr = mode === "two-pointers" && (i === f.left || i === f.right);
           const matched = mode === "two-pointers" && f.found && (i === f.left || i === f.right);
-          let bg = "rgba(18,24,38,0.7)";
+          let bg = "rgba(22,26,34,0.05)";
           let border = "rgba(148,163,184,0.18)";
           if (matched) { bg = ACCENT.algo.raw; border = ACCENT.algo.raw; }
           else if (isPtr) { bg = "rgba(56,189,248,0.18)"; border = "#38bdf8"; }
-          else if (inBest) { bg = "rgba(163,230,53,0.16)"; border = ACCENT.algo.raw; }
+          else if (inBest) { bg = "rgba(77,124,15,0.16)"; border = ACCENT.algo.raw; }
           else if (inWindow) { bg = "rgba(56,189,248,0.14)"; border = "#38bdf8"; }
           return (
             <div key={i} className="relative flex flex-col items-center">
@@ -105,7 +105,7 @@ export function PatternViz({ mode }: { mode: "two-pointers" | "sliding-window" }
               <motion.div
                 animate={{ backgroundColor: bg, borderColor: border, boxShadow: isPtr || matched ? `0 0 14px ${border}` : "none" }}
                 className="grid h-12 w-11 place-items-center rounded-lg border font-mono text-base font-semibold"
-                style={{ color: matched ? "#06251f" : "#fff" }}
+                style={{ color: matched ? "#f4f6f8" : "#161A22" }}
               >
                 {v}
               </motion.div>

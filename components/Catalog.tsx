@@ -16,15 +16,15 @@ const accentText: Record<Pillar, string> = {
   "system-design": "text-sys",
 };
 const accentHover: Record<Pillar, string> = {
-  "data-structures": "hover:border-ds/50 hover:shadow-[0_0_30px_-10px_#2DD4BF]",
-  algorithms: "hover:border-algo/50 hover:shadow-[0_0_30px_-10px_#A3E635]",
-  "system-design": "hover:border-sys/50 hover:shadow-[0_0_30px_-10px_#FBBF24]",
+  "data-structures": "hover:border-ds/50 hover:shadow-sm",
+  algorithms: "hover:border-algo/50 hover:shadow-sm",
+  "system-design": "hover:border-sys/50 hover:shadow-sm",
 };
 const pillBg: Record<Pillar | "all", string> = {
-  all: "data-[on=true]:bg-white data-[on=true]:text-ink",
-  "data-structures": "data-[on=true]:bg-ds data-[on=true]:text-ink",
-  algorithms: "data-[on=true]:bg-algo data-[on=true]:text-ink",
-  "system-design": "data-[on=true]:bg-sys data-[on=true]:text-ink",
+  all: "data-[on=true]:bg-coal data-[on=true]:text-white",
+  "data-structures": "data-[on=true]:bg-ds data-[on=true]:text-white",
+  algorithms: "data-[on=true]:bg-algo data-[on=true]:text-white",
+  "system-design": "data-[on=true]:bg-sys data-[on=true]:text-white",
 };
 
 export function Catalog() {
@@ -87,7 +87,7 @@ export function Catalog() {
             value={q}
             onChange={(e) => setQ(e.target.value)}
             placeholder="Search topics…"
-            className="w-full rounded-lg border border-line bg-white/5 py-2.5 pl-9 pr-3 text-sm text-white outline-none transition-colors placeholder:text-slate-500 focus:border-slate-500 sm:w-64"
+            className="w-full rounded-lg border border-line bg-white/5 py-2.5 pl-9 pr-3 text-sm text-coal outline-none transition-colors placeholder:text-slate-500 focus:border-brand sm:w-64"
           />
         </div>
       </div>
@@ -126,11 +126,11 @@ export function Catalog() {
                     <span className="font-mono text-2xs text-slate-600">soon</span>
                   )}
                 </div>
-                <h3 className="mt-4 text-lg font-bold transition-colors group-hover:text-white">{t.title}</h3>
+                <h3 className="mt-4 text-lg font-bold transition-colors group-hover:text-brand">{t.title}</h3>
                 <p className="mt-1.5 flex-1 text-sm leading-relaxed text-slate-400">{t.tagline}</p>
                 <div className="mt-4 flex items-center justify-between">
                   <span className="font-mono text-2xs uppercase tracking-wider text-slate-500">{t.difficulty}</span>
-                  <ArrowUpRight size={16} className="text-slate-600 transition-all group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-white" />
+                  <ArrowUpRight size={16} className="text-slate-600 transition-all group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-brand" />
                 </div>
               </Link>
             </motion.div>

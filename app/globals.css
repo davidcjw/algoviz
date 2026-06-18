@@ -6,7 +6,8 @@
   --font-display: "Bricolage Grotesque", system-ui, sans-serif;
   --font-sans: "Sora", system-ui, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, monospace;
-  --bg: #070a12;
+  --bg: #faf8f3;
+  --coal: #161a22;
 }
 
 @layer base {
@@ -20,7 +21,7 @@
 
   body {
     background-color: var(--bg);
-    color: #e7ecf5;
+    color: var(--coal);
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
@@ -28,14 +29,15 @@
   }
 
   ::selection {
-    background: rgba(163, 230, 53, 0.25);
-    color: #fff;
+    background: rgba(31, 58, 95, 0.16);
+    color: var(--coal);
   }
 
   h1, h2, h3, h4 {
     font-family: var(--font-display);
     font-weight: 700;
     letter-spacing: -0.02em;
+    color: var(--coal);
   }
 
   /* Custom scrollbar */
@@ -44,72 +46,97 @@
     height: 10px;
   }
   ::-webkit-scrollbar-track {
-    background: #080b14;
+    background: #f1ece2;
   }
   ::-webkit-scrollbar-thumb {
-    background: #1f2940;
+    background: #d2c9b6;
     border-radius: 999px;
-    border: 2px solid #080b14;
+    border: 2px solid #f1ece2;
   }
   ::-webkit-scrollbar-thumb:hover {
-    background: #2c3a59;
+    background: #bfb49d;
   }
 }
 
 @layer components {
-  /* Atmospheric grid background */
+  /* Faint engineering grid — dark hairlines on paper */
   .bg-grid {
     background-image:
-      linear-gradient(to right, rgba(148, 163, 184, 0.06) 1px, transparent 1px),
-      linear-gradient(to bottom, rgba(148, 163, 184, 0.06) 1px, transparent 1px);
+      linear-gradient(to right, rgba(22, 26, 34, 0.045) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(22, 26, 34, 0.045) 1px, transparent 1px);
     background-size: 40px 40px;
   }
 
   .bg-dots {
-    background-image: radial-gradient(rgba(148, 163, 184, 0.18) 1px, transparent 1px);
+    background-image: radial-gradient(rgba(22, 26, 34, 0.10) 1px, transparent 1px);
     background-size: 22px 22px;
   }
 
-  /* Subtle grain overlay */
+  /* Barely-there paper tooth (no heavy AI grain) */
   .grain::after {
     content: "";
     position: fixed;
     inset: 0;
     pointer-events: none;
     z-index: 1;
-    opacity: 0.035;
+    opacity: 0.018;
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   }
 
+  /* Frosted-light bar (navbar) — flat, no neon */
   .glass {
-    background: rgba(14, 17, 29, 0.6);
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
-    border: 1px solid rgba(148, 163, 184, 0.12);
+    background: rgba(250, 248, 243, 0.78);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(22, 26, 34, 0.08);
   }
 
+  /* Flat paper card — hairline rule + whisper-soft lift, no gradient */
   .card {
-    background: linear-gradient(180deg, rgba(18, 24, 38, 0.7) 0%, rgba(10, 14, 22, 0.7) 100%);
-    border: 1px solid rgba(148, 163, 184, 0.1);
+    background: #ffffff;
+    border: 1px solid rgba(22, 26, 34, 0.10);
     border-radius: 1rem;
+    box-shadow: 0 1px 2px rgba(22, 26, 34, 0.04);
   }
 
+  /* Was a rainbow gradient — now a single confident editorial ink-blue */
   .text-gradient {
-    background: linear-gradient(120deg, #5eead4 0%, #a3e635 45%, #fbbf24 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
+    color: #1f3a5f;
   }
 
   .chip {
     @apply inline-flex items-center gap-1.5 rounded-full border border-line px-3 py-1 text-xs font-mono uppercase tracking-wider;
   }
 
-  /* Glow utilities */
-  .glow-ds { box-shadow: 0 0 0 1px rgba(45, 212, 191, 0.25), 0 0 40px -8px rgba(45, 212, 191, 0.5); }
-  .glow-algo { box-shadow: 0 0 0 1px rgba(163, 230, 53, 0.25), 0 0 40px -8px rgba(163, 230, 53, 0.5); }
-  .glow-sys { box-shadow: 0 0 0 1px rgba(251, 191, 36, 0.25), 0 0 40px -8px rgba(251, 191, 36, 0.5); }
+  /* Pillar emphasis — a thin colored ring instead of a neon glow */
+  .glow-ds { box-shadow: 0 0 0 1px rgba(15, 118, 110, 0.30); }
+  .glow-algo { box-shadow: 0 0 0 1px rgba(77, 124, 15, 0.30); }
+  .glow-sys { box-shadow: 0 0 0 1px rgba(180, 83, 9, 0.30); }
 }
+
+/* ───────────────────────────────────────────────────────────────
+   Light-theme bridge
+   These dark-era utility classes are used across ~30 component
+   files. Remapping them once here keeps the palette centralized
+   instead of editing every file. (Loaded after @tailwind utilities
+   so equal-specificity overrides win by source order.)
+   ─────────────────────────────────────────────────────────────── */
+.text-slate-200,
+.group:hover .group-hover\:text-slate-200 { color: #232932; }
+.text-slate-300 { color: #3a414e; }
+.text-slate-400 { color: #565f70; }
+.text-slate-500,
+.placeholder\:text-slate-500::placeholder { color: #727b8c; }
+/* slate-600+ already read as dark text on paper — left untouched */
+
+.bg-white\/5,
+.bg-white\/\[0\.02\] { background-color: rgba(22, 26, 34, 0.035); }
+.bg-white\/10 { background-color: rgba(22, 26, 34, 0.06); }
+.hover\:bg-white\/5:hover,
+.hover\:bg-white\/10:hover { background-color: rgba(22, 26, 34, 0.06); }
+
+.border-white\/30 { border-color: rgba(22, 26, 34, 0.12); }
+.border-white\/40 { border-color: rgba(22, 26, 34, 0.16); }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {

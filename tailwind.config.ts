@@ -9,30 +9,37 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
+        // Paper surfaces (light editorial). DEFAULT = page; higher steps = more contrast wells.
         ink: {
-          DEFAULT: "#070A12",
-          900: "#080B14",
-          800: "#0C111D",
-          700: "#121826",
-          600: "#1A2233",
-          500: "#232C40",
+          DEFAULT: "#FAF8F3", // page — warm paper
+          900: "#F1ECE2", // gentle inset / canvas
+          800: "#ECE6DA",
+          700: "#E5DECF",
+          600: "#DBD3C1",
+          500: "#CFC5B0",
         },
-        line: "rgba(148, 163, 184, 0.12)",
-        // Pillar accents
+        coal: "#161A22", // primary ink text / strong emphasis
+        brand: {
+          DEFAULT: "#1F3A5F", // single editorial accent — ink-blue
+          soft: "#2B4E78",
+          deep: "#15314F",
+        },
+        line: "rgba(22, 26, 34, 0.12)", // dark hairline on paper
+        // Pillar accents — muted, editorial (read as ink tags, not neon)
         ds: {
-          DEFAULT: "#2DD4BF", // teal — data structures
-          soft: "#5EEAD4",
-          deep: "#0D9488",
+          DEFAULT: "#0F766E", // teal — data structures
+          soft: "#14B8A6",
+          deep: "#0B5A54",
         },
         algo: {
-          DEFAULT: "#A3E635", // lime — algorithms
-          soft: "#BEF264",
-          deep: "#65A30D",
+          DEFAULT: "#4D7C0F", // olive — algorithms
+          soft: "#65A30D",
+          deep: "#3F6212",
         },
         sys: {
-          DEFAULT: "#FBBF24", // amber — system design
-          soft: "#FCD34D",
-          deep: "#D97706",
+          DEFAULT: "#B45309", // ochre — system design
+          soft: "#D97706",
+          deep: "#92400E",
         },
       },
       fontFamily: {

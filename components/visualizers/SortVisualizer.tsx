@@ -26,9 +26,9 @@ export function SortVisualizer({ algorithm }: { algorithm: SortKey }) {
   const colorFor = (id: number) => {
     if (frame.sorted?.includes(id)) return ACCENT.algo.raw;
     if (frame.pivot === id) return "#f472b6";
-    if (frame.active?.includes(id)) return "#ffffff";
+    if (frame.active?.includes(id)) return "#161A22";
     if (frame.compare?.includes(id)) return "#38bdf8";
-    return "#3f4a63";
+    return "#94a3b8";
   };
 
   return (
@@ -39,7 +39,7 @@ export function SortVisualizer({ algorithm }: { algorithm: SortKey }) {
       legend={
         <>
           <LegendDot color="#38bdf8" label="comparing" />
-          <LegendDot color="#ffffff" label="moving" />
+          <LegendDot color="#161A22" label="moving" />
           {algorithm === "quick-sort" && <LegendDot color="#f472b6" label="pivot" />}
           <LegendDot color={ACCENT.algo.raw} label="sorted" />
         </>
@@ -78,7 +78,7 @@ export function SortVisualizer({ algorithm }: { algorithm: SortKey }) {
                 animate={{
                   height: `${(item.value / maxVal) * 100}%`,
                   backgroundColor: c,
-                  boxShadow: highlighted ? `0 0 18px ${c}` : "none",
+                  boxShadow: highlighted ? "0 2px 10px rgba(22,26,34,0.18)" : "none",
                 }}
                 transition={{ duration: 0.25 }}
                 style={{ minHeight: 6 }}
