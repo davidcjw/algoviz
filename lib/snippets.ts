@@ -1,180 +1,194 @@
-// Python code snippets for common interview scenarios, keyed by topic slug.
-// Kept out of content.ts to keep the catalog readable; attached to each Topic
-// at module load. Each snippet is a focused "how do I actually do X" example.
+// One self-contained, runnable Python program per topic, keyed by slug.
+// Each is copy-paste runnable in any Python 3 environment (stdlib only) and
+// prints the operations it demonstrates. Inline `# =>` comments show the
+// expected output. Verified by executing every program (see scripts).
 
-export interface CodeSnippet {
-  label: string;
-  code: string;
-}
+export const CODE_SNIPPETS: Record<string, string> = {
+  array: `
+# Array operations on a Python list. Run as-is.
+arr = [3, 1, 4, 1, 5]
 
-export const CODE_SNIPPETS: Record<string, CodeSnippet[]> = {
-  array: [
-    {
-      label: "Insert & delete",
-      code: `arr = [3, 1, 4, 1, 5]
+arr.append(9)        # add to the end       -> O(1) amortized
+arr.insert(0, 2)     # insert at the front  -> O(n), shifts right
+arr[2] = 7           # overwrite by index   -> O(1)
+arr.pop()            # remove from the end  -> O(1)
+arr.pop(0)           # remove from front    -> O(n)
+arr.remove(4)        # remove first 4       -> O(n)
 
-arr.append(9)        # O(1) amortized — add to the end
-arr.insert(0, 2)     # O(n) — shift everything right
-arr[2] = 7           # O(1) — random access by index
-val = arr.pop()      # O(1) — remove from the end
-arr.pop(0)           # O(n) — remove from front, shifts left
-arr.remove(4)        # O(n) — find, then delete first match`,
-    },
-    {
-      label: "Search & iterate",
-      code: `for i, x in enumerate(arr):
-    print(i, x)
+print(arr)                      # => [3, 7, 1, 5]
+print(len(arr))                 # => 4
+print(5 in arr, arr.index(5))   # => True 3
+`,
 
-if 5 in arr:          # O(n) linear scan
-    idx = arr.index(5)
-
-sub = arr[1:4]        # slice — copies a window, O(k)`,
-    },
-  ],
-
-  "linked-list": [
-    {
-      label: "Node",
-      code: `class Node:
+  "linked-list": `
+# Singly linked list — insert, delete, search, reverse. Run as-is.
+class Node:
     def __init__(self, val, next=None):
         self.val = val
-        self.next = next`,
-    },
-    {
-      label: "Insert head",
-      code: `def insert_head(head, val):
-    # New node points at the old head; return it as the new head. O(1).
-    return Node(val, head)`,
-    },
-    {
-      label: "Insert tail",
-      code: `def insert_tail(head, val):
-    node = Node(val)
-    if head is None:
-        return node
-    cur = head
-    while cur.next:          # walk to the last node — O(n)
-        cur = cur.next
-    cur.next = node
-    return head`,
-    },
-    {
-      label: "Insert after",
-      code: `def insert_after(node, val):
-    # Splice between node and node.next — pure pointer surgery, O(1).
-    node.next = Node(val, node.next)`,
-    },
-    {
-      label: "Remove value",
-      code: `def remove(head, val):
-    dummy = Node(0, head)        # sentinel kills the head edge case
-    prev = dummy
-    while prev.next:
-        if prev.next.val == val:
-            prev.next = prev.next.next   # skip the target — O(1) splice
-            break
-        prev = prev.next
-    return dummy.next`,
-    },
-    {
-      label: "Reverse",
-      code: `def reverse(head):
-    prev = None
-    while head:
-        head.next, prev, head = prev, head, head.next
-    return prev`,
-    },
-  ],
+        self.next = next
 
-  "doubly-linked-list": [
-    {
-      label: "Node",
-      code: `class Node:
+class LinkedList:
+    def __init__(self):
+        self.head = None
+
+    def insert_head(self, val):           # O(1)
+        self.head = Node(val, self.head)
+
+    def insert_tail(self, val):           # O(n)
+        node = Node(val)
+        if not self.head:
+            self.head = node
+            return
+        cur = self.head
+        while cur.next:
+            cur = cur.next
+        cur.next = node
+
+    def remove(self, val):                # O(n) — sentinel avoids the head edge case
+        dummy = Node(0, self.head)
+        prev = dummy
+        while prev.next:
+            if prev.next.val == val:
+                prev.next = prev.next.next
+                break
+            prev = prev.next
+        self.head = dummy.next
+
+    def search(self, val):                # O(n)
+        cur = self.head
+        while cur:
+            if cur.val == val:
+                return True
+            cur = cur.next
+        return False
+
+    def reverse(self):                    # O(n)
+        prev, cur = None, self.head
+        while cur:
+            cur.next, prev, cur = prev, cur, cur.next
+        self.head = prev
+
+    def to_list(self):
+        out, cur = [], self.head
+        while cur:
+            out.append(cur.val)
+            cur = cur.next
+        return out
+
+ll = LinkedList()
+ll.insert_tail(1)
+ll.insert_tail(2)
+ll.insert_head(0)        # 0 -> 1 -> 2
+print(ll.to_list())      # => [0, 1, 2]
+ll.remove(1)             # 0 -> 2
+print(ll.to_list())      # => [0, 2]
+print(ll.search(2))      # => True
+ll.reverse()             # 2 -> 0
+print(ll.to_list())      # => [2, 0]
+`,
+
+  "doubly-linked-list": `
+# Doubly linked list — O(1) removal once you hold the node.
+class Node:
     def __init__(self, val):
         self.val = val
         self.prev = None
-        self.next = None`,
-    },
-    {
-      label: "Insert after",
-      code: `def insert_after(node, new):
-    new.prev = node
-    new.next = node.next
-    if node.next:
-        node.next.prev = new
-    node.next = new`,
-    },
-    {
-      label: "Remove node",
-      code: `def remove(node):
-    # With both pointers in hand, deletion is O(1) — no traversal needed.
-    if node.prev:
-        node.prev.next = node.next
-    if node.next:
-        node.next.prev = node.prev
-    node.prev = node.next = None`,
-    },
-  ],
+        self.next = None
 
-  stack: [
-    {
-      label: "Push / pop / peek",
-      code: `stack = []
+class DoublyLinkedList:
+    def __init__(self):
+        self.head = None
+        self.tail = None
 
-stack.append(10)     # push — O(1)
+    def push_back(self, val):
+        node = Node(val)
+        if not self.tail:
+            self.head = self.tail = node
+        else:
+            node.prev = self.tail
+            self.tail.next = node
+            self.tail = node
+        return node
+
+    def remove(self, node):               # O(1) — rewire both neighbours
+        if node.prev:
+            node.prev.next = node.next
+        else:
+            self.head = node.next
+        if node.next:
+            node.next.prev = node.prev
+        else:
+            self.tail = node.prev
+
+    def to_list(self):
+        out, cur = [], self.head
+        while cur:
+            out.append(cur.val)
+            cur = cur.next
+        return out
+
+dll = DoublyLinkedList()
+dll.push_back(10)
+mid = dll.push_back(20)
+dll.push_back(30)
+print(dll.to_list())     # => [10, 20, 30]
+dll.remove(mid)          # unlink the middle node in O(1)
+print(dll.to_list())     # => [10, 30]
+`,
+
+  stack: `
+# Stack (LIFO) on a Python list.
+stack = []
+stack.append(10)     # push
 stack.append(20)
-top = stack[-1]      # peek — O(1)
-val = stack.pop()    # pop the top — O(1)
-empty = not stack    # truthiness check for empty`,
-    },
-  ],
+stack.append(30)
 
-  queue: [
-    {
-      label: "Enqueue / dequeue",
-      code: `from collections import deque
+print(stack[-1])     # peek => 30
+print(stack.pop())   # => 30
+print(stack.pop())   # => 20
+print(stack)         # => [10]
+print(not stack)     # empty? => False
+`,
+
+  queue: `
+# Queue (FIFO) with collections.deque — O(1) at both ends.
+from collections import deque
 
 q = deque()
-
-q.append(1)          # enqueue at the back — O(1)
+q.append(1)          # enqueue
 q.append(2)
-front = q[0]         # peek front — O(1)
-val = q.popleft()    # dequeue from the front — O(1)
-empty = not q
+q.append(3)
 
-# Avoid list.pop(0) for a queue — it is O(n) because it shifts every element.`,
-    },
-  ],
+print(q[0])          # peek front => 1
+print(q.popleft())   # dequeue => 1
+print(q.popleft())   # => 2
+print(list(q))       # => [3]
+`,
 
-  "hash-table": [
-    {
-      label: "Core ops",
-      code: `table = {}
+  "hash-table": `
+# Hash table (dict) plus the handy collections helpers.
+from collections import defaultdict, Counter
 
-table["a"] = 1            # insert / update — O(1) average
-val = table.get("a", 0)   # lookup with a default, no KeyError
-if "a" in table:          # membership — O(1) average
-    del table["a"]        # delete — O(1) average
-
-for key, val in table.items():
-    print(key, val)`,
-    },
-    {
-      label: "defaultdict & Counter",
-      code: `from collections import defaultdict, Counter
+table = {}
+table["a"] = 1
+table["b"] = 2
+table["a"] = 9            # update in place
+print(table.get("a"))     # => 9
+print(table.get("z", 0))  # missing key, default => 0
+del table["b"]
+print("b" in table)       # => False
 
 groups = defaultdict(list)
-groups["even"].append(2)        # no KeyError on first touch
+for word in ["ant", "bee", "ax"]:
+    groups[word[0]].append(word)
+print(dict(groups))       # => {'a': ['ant', 'ax'], 'b': ['bee']}
 
-counts = Counter("banana")      # Counter({'a': 3, 'n': 2, 'b': 1})
-counts.most_common(1)           # [('a', 3)]`,
-    },
-  ],
+print(Counter("banana"))  # => Counter({'a': 3, 'n': 2, 'b': 1})
+`,
 
-  "binary-search-tree": [
-    {
-      label: "Node & insert",
-      code: `class Node:
+  "binary-search-tree": `
+# Binary search tree — insert, search, in-order (sorted) traversal.
+class Node:
     def __init__(self, val):
         self.val = val
         self.left = None
@@ -185,62 +199,54 @@ def insert(root, val):
         return Node(val)
     if val < root.val:
         root.left = insert(root.left, val)
-    else:
+    elif val > root.val:
         root.right = insert(root.right, val)
-    return root`,
-    },
-    {
-      label: "Search",
-      code: `def search(root, val):
+    return root
+
+def search(root, val):
     while root and root.val != val:
         root = root.left if val < root.val else root.right
-    return root            # the node, or None`,
-    },
-    {
-      label: "Inorder (sorted)",
-      code: `def inorder(root, out):
+    return root is not None
+
+def inorder(root, out):
     if root:
         inorder(root.left, out)
-        out.append(root.val)     # visited in ascending order
+        out.append(root.val)
         inorder(root.right, out)
-    return out`,
-    },
-  ],
+    return out
 
-  heap: [
-    {
-      label: "Push / pop min",
-      code: `import heapq
+root = None
+for v in [5, 3, 8, 1, 4, 7]:
+    root = insert(root, v)
+
+print(inorder(root, []))   # => [1, 3, 4, 5, 7, 8]
+print(search(root, 4))     # => True
+print(search(root, 6))     # => False
+`,
+
+  heap: `
+# Heap / priority queue with heapq (a min-heap).
+import heapq
 
 h = []
-heapq.heappush(h, 5)      # O(log n)
-heapq.heappush(h, 1)
-heapq.heappush(h, 3)
+for x in [5, 1, 8, 3, 2]:
+    heapq.heappush(h, x)
 
-smallest = h[0]           # peek min — O(1)
-val = heapq.heappop(h)    # pop min — O(log n)
+print(h[0])                  # peek min => 1
+print(heapq.heappop(h))      # => 1
+print(heapq.heappop(h))      # => 2
+print(heapq.nlargest(2, h))  # => [8, 5]
 
-nums = [5, 1, 3, 8, 2]
-heapq.heapify(nums)       # build a heap in place — O(n)`,
-    },
-    {
-      label: "Max-heap & top-k",
-      code: `import heapq
+# Max-heap trick: negate the values.
+mh = []
+for x in [5, 1, 8]:
+    heapq.heappush(mh, -x)
+print(-heapq.heappop(mh))    # => 8
+`,
 
-# Python's heapq is a min-heap — negate values for a max-heap.
-h = []
-heapq.heappush(h, -x)
-largest = -heapq.heappop(h)
-
-# k largest without fully sorting:
-top3 = heapq.nlargest(3, nums)`,
-    },
-  ],
-
-  trie: [
-    {
-      label: "Trie (dict of dicts)",
-      code: `class Trie:
+  trie: `
+# Trie (prefix tree) built from nested dicts.
+class Trie:
     def __init__(self):
         self.root = {}
 
@@ -248,7 +254,7 @@ top3 = heapq.nlargest(3, nums)`,
         node = self.root
         for ch in word:
             node = node.setdefault(ch, {})
-        node["$"] = True          # mark end of a complete word
+        node["$"] = True            # end-of-word marker
 
     def search(self, word):
         node = self.root
@@ -264,41 +270,60 @@ top3 = heapq.nlargest(3, nums)`,
             if ch not in node:
                 return False
             node = node[ch]
-        return True`,
-    },
-  ],
+        return True
 
-  graph: [
-    {
-      label: "Build adjacency list",
-      code: `from collections import defaultdict
+t = Trie()
+for w in ["cat", "car", "dog"]:
+    t.insert(w)
+
+print(t.search("cat"))        # => True
+print(t.search("ca"))         # => False (prefix, not a full word)
+print(t.starts_with("ca"))    # => True
+print(t.starts_with("do"))    # => True
+`,
+
+  graph: `
+# Graph as an adjacency list, with BFS and DFS traversals.
+from collections import defaultdict, deque
 
 graph = defaultdict(list)
-edges = [(0, 1), (0, 2), (1, 2)]
-for u, v in edges:
+for u, v in [(0, 1), (0, 2), (1, 3), (2, 3)]:
     graph[u].append(v)
-    graph[v].append(u)      # drop this line for a directed graph`,
-    },
-    {
-      label: "Iterate neighbors",
-      code: `for neighbor in graph[0]:
-    print(neighbor)
+    graph[v].append(u)          # undirected: link both ways
 
-degree = len(graph[0])      # number of edges touching node 0`,
-    },
-  ],
+def bfs(start):
+    seen, q, order = {start}, deque([start]), []
+    while q:
+        node = q.popleft()
+        order.append(node)
+        for nxt in graph[node]:
+            if nxt not in seen:
+                seen.add(nxt)
+                q.append(nxt)
+    return order
 
-  "union-find": [
-    {
-      label: "Union-Find (DSU)",
-      code: `class UnionFind:
+def dfs(node, seen, order):
+    seen.add(node)
+    order.append(node)
+    for nxt in graph[node]:
+        if nxt not in seen:
+            dfs(nxt, seen, order)
+    return order
+
+print(bfs(0))             # => [0, 1, 2, 3]
+print(dfs(0, set(), []))  # => [0, 1, 3, 2]
+`,
+
+  "union-find": `
+# Union-Find (disjoint set) with path compression + union by rank.
+class UnionFind:
     def __init__(self, n):
         self.parent = list(range(n))
         self.rank = [0] * n
 
     def find(self, x):
         while self.parent[x] != x:
-            self.parent[x] = self.parent[self.parent[x]]  # path compression
+            self.parent[x] = self.parent[self.parent[x]]   # path compression
             x = self.parent[x]
         return x
 
@@ -307,18 +332,24 @@ degree = len(graph[0])      # number of edges touching node 0`,
         if ra == rb:
             return False           # already connected
         if self.rank[ra] < self.rank[rb]:
-            ra, rb = rb, ra        # union by rank
+            ra, rb = rb, ra
         self.parent[rb] = ra
         if self.rank[ra] == self.rank[rb]:
             self.rank[ra] += 1
-        return True`,
-    },
-  ],
+        return True
 
-  "bubble-sort": [
-    {
-      label: "Bubble sort",
-      code: `def bubble_sort(arr):
+uf = UnionFind(5)
+uf.union(0, 1)
+uf.union(2, 3)
+uf.union(1, 3)
+print(uf.find(0) == uf.find(2))   # => True  (0-1-3-2 all joined)
+print(uf.find(0) == uf.find(4))   # => False (4 stands alone)
+print(uf.union(0, 2))             # already joined => False
+`,
+
+  "bubble-sort": `
+# Bubble sort — repeatedly swap adjacent out-of-order pairs, with early exit.
+def bubble_sort(arr):
     n = len(arr)
     for i in range(n):
         swapped = False
@@ -326,72 +357,70 @@ degree = len(graph[0])      # number of edges touching node 0`,
             if arr[j] > arr[j + 1]:
                 arr[j], arr[j + 1] = arr[j + 1], arr[j]
                 swapped = True
-        if not swapped:        # nothing moved — already sorted
+        if not swapped:        # nothing moved this pass -> already sorted
             break
-    return arr`,
-    },
-  ],
+    return arr
 
-  "selection-sort": [
-    {
-      label: "Selection sort",
-      code: `def selection_sort(arr):
+print(bubble_sort([5, 2, 9, 1, 5, 6]))   # => [1, 2, 5, 5, 6, 9]
+`,
+
+  "selection-sort": `
+# Selection sort — each pass selects the smallest remaining element.
+def selection_sort(arr):
     n = len(arr)
     for i in range(n):
         lo = i
         for j in range(i + 1, n):
             if arr[j] < arr[lo]:
-                lo = j         # find the smallest in the unsorted part
+                lo = j
         arr[i], arr[lo] = arr[lo], arr[i]
-    return arr`,
-    },
-  ],
+    return arr
 
-  "insertion-sort": [
-    {
-      label: "Insertion sort",
-      code: `def insertion_sort(arr):
+print(selection_sort([64, 25, 12, 22, 11]))   # => [11, 12, 22, 25, 64]
+`,
+
+  "insertion-sort": `
+# Insertion sort — grow a sorted prefix, inserting each element into place.
+def insertion_sort(arr):
     for i in range(1, len(arr)):
         key = arr[i]
         j = i - 1
         while j >= 0 and arr[j] > key:
             arr[j + 1] = arr[j]    # shift larger elements right
             j -= 1
-        arr[j + 1] = key           # drop key into its slot
-    return arr`,
-    },
-  ],
+        arr[j + 1] = key
+    return arr
 
-  "merge-sort": [
-    {
-      label: "Merge sort",
-      code: `def merge_sort(arr):
+print(insertion_sort([5, 2, 4, 6, 1, 3]))   # => [1, 2, 3, 4, 5, 6]
+`,
+
+  "merge-sort": `
+# Merge sort — divide in half, sort each, merge. Stable, O(n log n).
+def merge_sort(arr):
     if len(arr) <= 1:
         return arr
     mid = len(arr) // 2
     left = merge_sort(arr[:mid])
     right = merge_sort(arr[mid:])
-    return merge(left, right)`,
-    },
-    {
-      label: "Merge step",
-      code: `def merge(a, b):
+    return merge(left, right)
+
+def merge(a, b):
     out, i, j = [], 0, 0
     while i < len(a) and j < len(b):
-        if a[i] <= b[j]:           # <= keeps the sort stable
+        if a[i] <= b[j]:           # <= keeps equal elements stable
             out.append(a[i]); i += 1
         else:
             out.append(b[j]); j += 1
     out.extend(a[i:])
     out.extend(b[j:])
-    return out`,
-    },
-  ],
+    return out
 
-  "quick-sort": [
-    {
-      label: "Quick sort",
-      code: `def quick_sort(arr, lo=0, hi=None):
+print(merge_sort([5, 2, 9, 1, 5, 6]))   # => [1, 2, 5, 5, 6, 9]
+`,
+
+  "quick-sort": `
+# Quick sort — partition around a pivot (Lomuto scheme), recurse on halves.
+def quick_sort(arr, lo=0, hi=None):
     if hi is None:
         hi = len(arr) - 1
     if lo >= hi:
@@ -399,11 +428,9 @@ degree = len(graph[0])      # number of edges touching node 0`,
     p = partition(arr, lo, hi)
     quick_sort(arr, lo, p - 1)
     quick_sort(arr, p + 1, hi)
-    return arr`,
-    },
-    {
-      label: "Partition (Lomuto)",
-      code: `def partition(arr, lo, hi):
+    return arr
+
+def partition(arr, lo, hi):
     pivot = arr[hi]
     i = lo                         # boundary of the "< pivot" region
     for j in range(lo, hi):
@@ -411,117 +438,134 @@ degree = len(graph[0])      # number of edges touching node 0`,
             arr[i], arr[j] = arr[j], arr[i]
             i += 1
     arr[i], arr[hi] = arr[hi], arr[i]
-    return i`,
-    },
-  ],
+    return i
 
-  "linear-search": [
-    {
-      label: "Linear search",
-      code: `def linear_search(arr, target):
+print(quick_sort([5, 2, 9, 1, 5, 6]))   # => [1, 2, 5, 5, 6, 9]
+`,
+
+  "linear-search": `
+# Linear search — scan until found.
+def linear_search(arr, target):
     for i, x in enumerate(arr):
         if x == target:
             return i        # first matching index
-    return -1               # not found`,
-    },
-  ],
+    return -1
 
-  "binary-search": [
-    {
-      label: "Binary search",
-      code: `def binary_search(arr, target):
+nums = [4, 2, 7, 1, 9, 3]
+print(linear_search(nums, 7))    # => 2
+print(linear_search(nums, 5))    # => -1 (not present)
+`,
+
+  "binary-search": `
+# Binary search — halve the range each step. Requires a sorted array.
+def binary_search(arr, target):
     lo, hi = 0, len(arr) - 1
     while lo <= hi:
-        mid = lo + (hi - lo) // 2     # avoids overflow in other languages
+        mid = lo + (hi - lo) // 2
         if arr[mid] == target:
             return mid
         if arr[mid] < target:
             lo = mid + 1
         else:
             hi = mid - 1
-    return -1`,
-    },
-    {
-      label: "bisect module",
-      code: `import bisect
+    return -1
 
-i = bisect.bisect_left(arr, target)   # first index where arr[i] >= target
-bisect.insort(arr, target)            # insert, keeping the list sorted`,
-    },
-  ],
+arr = [1, 3, 5, 7, 9, 11]
+print(binary_search(arr, 7))     # => 3
+print(binary_search(arr, 8))     # => -1 (not present)
+`,
 
-  bfs: [
-    {
-      label: "BFS (queue)",
-      code: `from collections import deque
+  bfs: `
+# Breadth-first search — explores level by level using a queue.
+from collections import deque
 
-def bfs(graph, start):
-    visited = {start}
-    q = deque([start])
-    order = []
+graph = {
+    0: [1, 2],
+    1: [0, 3, 4],
+    2: [0, 4],
+    3: [1],
+    4: [1, 2],
+}
+
+def bfs(start):
+    seen, q, order = {start}, deque([start]), []
     while q:
         node = q.popleft()
         order.append(node)
         for nxt in graph[node]:
-            if nxt not in visited:
-                visited.add(nxt)     # mark on enqueue, not on dequeue
+            if nxt not in seen:
+                seen.add(nxt)        # mark on enqueue, not dequeue
                 q.append(nxt)
-    return order`,
-    },
-  ],
+    return order
 
-  dfs: [
-    {
-      label: "DFS (recursive)",
-      code: `def dfs(graph, node, visited=None):
-    if visited is None:
-        visited = set()
-    visited.add(node)
+print(bfs(0))    # => [0, 1, 2, 3, 4]
+`,
+
+  dfs: `
+# Depth-first search — recursive and iterative versions agree.
+graph = {
+    0: [1, 2],
+    1: [0, 3, 4],
+    2: [0, 4],
+    3: [1],
+    4: [1, 2],
+}
+
+def dfs(node, seen, order):
+    seen.add(node)
+    order.append(node)
     for nxt in graph[node]:
-        if nxt not in visited:
-            dfs(graph, nxt, visited)
-    return visited`,
-    },
-    {
-      label: "DFS (iterative)",
-      code: `def dfs_iter(graph, start):
-    visited, stack = set(), [start]
+        if nxt not in seen:
+            dfs(nxt, seen, order)
+    return order
+
+def dfs_iter(start):
+    seen, stack, order = set(), [start], []
     while stack:
-        node = stack.pop()           # LIFO drives the depth-first order
-        if node in visited:
+        node = stack.pop()
+        if node in seen:
             continue
-        visited.add(node)
-        stack.extend(graph[node])
-    return visited`,
-    },
-  ],
+        seen.add(node)
+        order.append(node)
+        for nxt in reversed(graph[node]):   # reversed -> lowest neighbour first
+            stack.append(nxt)
+    return order
 
-  dijkstra: [
-    {
-      label: "Dijkstra (heap)",
-      code: `import heapq
+print(dfs(0, set(), []))   # => [0, 1, 3, 4, 2]
+print(dfs_iter(0))         # => [0, 1, 3, 4, 2]
+`,
 
-def dijkstra(graph, start):
-    # graph: {node: [(neighbor, weight), ...]}
+  dijkstra: `
+# Dijkstra's shortest paths from a source (non-negative weights).
+import heapq
+
+graph = {
+    "A": [("B", 1), ("C", 4)],
+    "B": [("C", 2), ("D", 5)],
+    "C": [("D", 1)],
+    "D": [],
+}
+
+def dijkstra(start):
     dist = {start: 0}
     pq = [(0, start)]
     while pq:
         d, node = heapq.heappop(pq)
         if d > dist.get(node, float("inf")):
-            continue                     # stale entry — already improved
+            continue                       # stale entry — already improved
         for nxt, w in graph[node]:
             nd = d + w
             if nd < dist.get(nxt, float("inf")):
                 dist[nxt] = nd
                 heapq.heappush(pq, (nd, nxt))
-    return dist`,
-    },
-  ],
+    return dist
 
-  "two-pointers": [
-    {
-      label: "Pair sum (sorted)",
-      code: `def two_sum_sorted(arr, target):
+print(dijkstra("A"))   # => {'A': 0, 'B': 1, 'C': 3, 'D': 4}
+`,
+
+  "two-pointers": `
+# Two pointers — pair sum in a sorted array, and in-place dedup.
+def two_sum_sorted(arr, target):
     lo, hi = 0, len(arr) - 1
     while lo < hi:
         s = arr[lo] + arr[hi]
@@ -531,11 +575,9 @@ def dijkstra(graph, start):
             lo += 1          # need a larger sum
         else:
             hi -= 1          # need a smaller sum
-    return None`,
-    },
-    {
-      label: "In-place dedup",
-      code: `def remove_dups(arr):
+    return None
+
+def dedup(arr):
     if not arr:
         return 0
     slow = 0
@@ -543,24 +585,25 @@ def dijkstra(graph, start):
         if arr[fast] != arr[slow]:
             slow += 1
             arr[slow] = arr[fast]
-    return slow + 1          # length of the deduped prefix`,
-    },
-  ],
+    return slow + 1          # length of the deduped prefix
 
-  "sliding-window": [
-    {
-      label: "Fixed window",
-      code: `def max_sum(arr, k):
+print(two_sum_sorted([1, 2, 4, 7, 11], 9))   # => (1, 3)
+nums = [1, 1, 2, 2, 2, 3]
+k = dedup(nums)
+print(k, nums[:k])                           # => 3 [1, 2, 3]
+`,
+
+  "sliding-window": `
+# Sliding window — fixed-size max sum, and longest substring without repeats.
+def max_sum(arr, k):
     window = sum(arr[:k])
     best = window
     for i in range(k, len(arr)):
-        window += arr[i] - arr[i - k]   # slide: add new, drop old
+        window += arr[i] - arr[i - k]   # slide: add the new, drop the old
         best = max(best, window)
-    return best`,
-    },
-    {
-      label: "Variable window",
-      code: `def longest_unique(s):
+    return best
+
+def longest_unique(s):
     seen = {}
     left = best = 0
     for right, ch in enumerate(s):
@@ -568,95 +611,95 @@ def dijkstra(graph, start):
             left = seen[ch] + 1     # jump past the duplicate
         seen[ch] = right
         best = max(best, right - left + 1)
-    return best`,
-    },
-  ],
+    return best
 
-  recursion: [
-    {
-      label: "Base + recursive case",
-      code: `def factorial(n):
+print(max_sum([2, 1, 5, 1, 3, 2], 3))   # => 9  (window [5, 1, 3])
+print(longest_unique("abcabcbb"))       # => 3  ("abc")
+`,
+
+  recursion: `
+# Recursion — base case + recursive case, plus memoized Fibonacci.
+from functools import lru_cache
+
+def factorial(n):
     if n <= 1:           # base case stops the recursion
         return 1
-    return n * factorial(n - 1)`,
-    },
-    {
-      label: "Memoized fib",
-      code: `from functools import lru_cache
+    return n * factorial(n - 1)
 
 @lru_cache(maxsize=None)
 def fib(n):
     if n < 2:
         return n
-    return fib(n - 1) + fib(n - 2)`,
-    },
-  ],
+    return fib(n - 1) + fib(n - 2)
 
-  backtracking: [
-    {
-      label: "Subsets",
-      code: `def subsets(nums):
+print(factorial(5))                  # => 120
+print([fib(i) for i in range(10)])   # => [0, 1, 1, 2, 3, 5, 8, 13, 21, 34]
+`,
+
+  backtracking: `
+# Backtracking — generate every subset and every permutation.
+def subsets(nums):
     res = []
     def backtrack(start, path):
         res.append(path[:])           # record a copy of the current choice
         for i in range(start, len(nums)):
             path.append(nums[i])      # choose
             backtrack(i + 1, path)
-            path.pop()                # un-choose (backtrack)
+            path.pop()                # un-choose
     backtrack(0, [])
-    return res`,
-    },
-    {
-      label: "Permutations",
-      code: `def permutations(nums):
+    return res
+
+def permutations(nums):
     res = []
     def backtrack(path, used):
         if len(path) == len(nums):
             res.append(path[:])
             return
-        for i, x in enumerate(nums):
+        for i in range(len(nums)):
             if used[i]:
                 continue
             used[i] = True
-            backtrack(path + [x], used)
+            backtrack(path + [nums[i]], used)
             used[i] = False
     backtrack([], [False] * len(nums))
-    return res`,
-    },
-  ],
+    return res
 
-  "dynamic-programming": [
-    {
-      label: "Bottom-up (tabulation)",
-      code: `def coin_change(coins, amount):
+print(subsets([1, 2, 3]))
+# => [[], [1], [1, 2], [1, 2, 3], [1, 3], [2], [2, 3], [3]]
+print(permutations([1, 2, 3]))
+# => [[1, 2, 3], [1, 3, 2], [2, 1, 3], [2, 3, 1], [3, 1, 2], [3, 2, 1]]
+`,
+
+  "dynamic-programming": `
+# Dynamic programming — bottom-up coin change and top-down climbing stairs.
+def coin_change(coins, amount):
     dp = [0] + [float("inf")] * amount
     for a in range(1, amount + 1):
         for c in coins:
             if c <= a:
                 dp[a] = min(dp[a], dp[a - c] + 1)
-    return dp[amount] if dp[amount] != float("inf") else -1`,
-    },
-    {
-      label: "Top-down (memoization)",
-      code: `def climb_stairs(n, memo=None):
+    return dp[amount] if dp[amount] != float("inf") else -1
+
+def climb_stairs(n, memo=None):
     if memo is None:
         memo = {}
     if n <= 2:
         return n
     if n not in memo:
         memo[n] = climb_stairs(n - 1, memo) + climb_stairs(n - 2, memo)
-    return memo[n]`,
-    },
-  ],
+    return memo[n]
 
-  "consistent-hashing": [
-    {
-      label: "Hash ring",
-      code: `import bisect, hashlib
+print(coin_change([1, 2, 5], 11))   # => 3   (5 + 5 + 1)
+print(climb_stairs(10))             # => 89
+`,
+
+  "consistent-hashing": `
+# Consistent hashing ring with virtual nodes (replicas) for even spread.
+import bisect, hashlib
 
 class HashRing:
     def __init__(self, nodes=(), replicas=100):
-        self.replicas = replicas      # virtual nodes smooth the load
+        self.replicas = replicas
         self.ring = {}
         self.keys = []
         for n in nodes:
@@ -675,15 +718,17 @@ class HashRing:
         if not self.ring:
             return None
         h = self._hash(key)
-        i = bisect.bisect(self.keys, h) % len(self.keys)  # walk clockwise
-        return self.ring[self.keys[i]]`,
-    },
-  ],
+        i = bisect.bisect(self.keys, h) % len(self.keys)   # first node clockwise
+        return self.ring[self.keys[i]]
 
-  "rate-limiting": [
-    {
-      label: "Token bucket",
-      code: `import time
+ring = HashRing(["node-A", "node-B", "node-C"])
+print(ring.get("user-42"))                            # => node-C (deterministic)
+print(ring.get("user-42") == ring.get("user-42"))     # => True (stable mapping)
+`,
+
+  "rate-limiting": `
+# Token bucket rate limiter — refills over time, allows controlled bursts.
+import time
 
 class TokenBucket:
     def __init__(self, capacity, refill_rate):
@@ -694,14 +739,16 @@ class TokenBucket:
 
     def allow(self, cost=1):
         now = time.monotonic()
-        # refill based on elapsed time, never exceeding capacity
+        # refill based on elapsed time, capped at capacity
         self.tokens = min(self.capacity,
                           self.tokens + (now - self.last) * self.refill_rate)
         self.last = now
         if self.tokens >= cost:
             self.tokens -= cost
             return True
-        return False                    # rate limited`,
-    },
-  ],
+        return False                    # rate limited
+
+bucket = TokenBucket(capacity=3, refill_rate=1)   # 3 burst, ~1 token/sec
+print([bucket.allow() for _ in range(5)])   # => [True, True, True, False, False]
+`,
 };

@@ -12,13 +12,12 @@ import {
 import { Code2, Eye, Pause, Play, RotateCcw, SkipBack, SkipForward, Shuffle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { CodeBlock } from "@/components/CodeBlock";
-import type { CodeSnippet } from "@/lib/snippets";
 
 export type Accent = "ds" | "algo" | "sys";
 
-/** Topic Python snippets, injected by the <Visualizer> registry so the shell can
+/** Topic Python program, injected by the <Visualizer> registry so the shell can
  *  offer a "<>" code tab without every visualizer threading the prop through. */
-export const VizCodeContext = createContext<CodeSnippet[] | null>(null);
+export const VizCodeContext = createContext<string | null>(null);
 
 export const ACCENT: Record<
   Accent,
@@ -70,7 +69,7 @@ export function VizShell({
 }) {
   const a = ACCENT[accent];
   const code = useContext(VizCodeContext);
-  const hasCode = !!code?.length;
+  const hasCode = !!code;
   const [view, setView] = useState<"viz" | "code">("viz");
   const showCode = hasCode && view === "code";
 
@@ -102,7 +101,7 @@ export function VizShell({
 
       {showCode ? (
         <div className="min-h-[260px] bg-[#13161d]">
-          <CodeBlock snippets={code!} embedded />
+          <CodeBlock code={code!} embedded />
         </div>
       ) : (
         <div className={cn("relative min-h-[260px] p-5 sm:p-6", className)}>{children}</div>

@@ -2,7 +2,6 @@
 
 import { useState, type ReactNode } from "react";
 import { Check, Copy } from "lucide-react";
-import type { CodeSnippet } from "@/lib/snippets";
 import { cn } from "@/lib/utils";
 
 const KEYWORDS = new Set([
@@ -65,20 +64,19 @@ function highlight(code: string): ReactNode[] {
 }
 
 export function CodeBlock({
-  snippets,
+  code,
   embedded = false,
 }: {
-  snippets: CodeSnippet[];
+  code: string;
   /** Drop the outer border/rounding so it sits flush inside another framed surface. */
   embedded?: boolean;
 }) {
-  const [active, setActive] = useState(0);
   const [copied, setCopied] = useState(false);
-  const snippet = snippets[Math.min(active, snippets.length - 1)];
+  const text = code.trim();
 
   const copy = async () => {
     try {
-      await navigator.clipboard.writeText(snippet.code);
+      await navigator.clipboard.writeText(text);
       setCopied(true);
       setTimeout(() => setCopied(false), 1500);
     } catch {
@@ -86,51 +84,37 @@ export function CodeBlock({
     }
   };
 
+  const copyButton = (
+    <button
+      type="button"
+      onClick={copy}
+      aria-label="Copy code"
+      className="inline-flex items-center gap-1.5 rounded-md border border-white/10 bg-white/5 px-2 py-1 font-mono text-2xs text-[#9aa2b1] backdrop-blur transition-colors hover:bg-white/10 hover:text-[#e7ebf2]"
+    >
+      {copied ? <Check size={13} className="text-ds-soft" /> : <Copy size={13} />}
+      {copied ? "Copied" : "Copy"}
+    </button>
+  );
+
   return (
     <div
       className={cn(
-        "overflow-hidden bg-[#13161d]",
+        "relative overflow-hidden bg-[#13161d]",
         embedded
           ? "h-full"
           : "rounded-xl border border-[#262b36] shadow-[0_1px_2px_rgba(22,26,34,0.06)]",
       )}
     >
-      {/* tab + chrome bar */}
-      <div className="flex items-stretch justify-between gap-2 border-b border-[#262b36] bg-[#161a22]">
-        <div className="flex min-w-0 flex-1 overflow-x-auto">
-          {snippets.map((s, i) => (
-            <button
-              key={s.label}
-              type="button"
-              onClick={() => setActive(i)}
-              className={cn(
-                "whitespace-nowrap border-b-2 px-3.5 py-2.5 font-mono text-2xs uppercase tracking-wider transition-colors",
-                i === active
-                  ? "border-ds-soft text-[#e7ebf2]"
-                  : "border-transparent text-[#7a8392] hover:text-[#c4cad6]",
-              )}
-            >
-              {s.label}
-            </button>
-          ))}
-        </div>
-        <div className="flex items-center gap-2 px-3">
+      {embedded ? (
+        <div className="absolute right-2 top-2 z-10">{copyButton}</div>
+      ) : (
+        <div className="flex items-center justify-between border-b border-[#262b36] bg-[#161a22] px-3 py-2">
           <span className="font-mono text-2xs uppercase tracking-wider text-[#5d6675]">python</span>
-          <button
-            type="button"
-            onClick={copy}
-            aria-label="Copy code"
-            className="inline-flex items-center gap-1.5 rounded-md px-2 py-1 font-mono text-2xs text-[#9aa2b1] transition-colors hover:bg-white/5 hover:text-[#e7ebf2]"
-          >
-            {copied ? <Check size={13} className="text-ds-soft" /> : <Copy size={13} />}
-            {copied ? "Copied" : "Copy"}
-          </button>
+          {copyButton}
         </div>
-      </div>
-
-      {/* code */}
+      )}
       <pre className="overflow-x-auto p-4 text-[13px] leading-relaxed">
-        <code className="font-mono text-[#c9d0dd]">{highlight(snippet.code)}</code>
+        <code className="font-mono text-[#c9d0dd]">{highlight(text)}</code>
       </pre>
     </div>
   );
