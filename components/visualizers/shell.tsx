@@ -101,7 +101,7 @@ export function VizShell({
       </div>
 
       {showCode ? (
-        <div className="min-h-[260px]">
+        <div className="min-h-[260px] bg-[#13161d]">
           <CodeBlock snippets={code!} embedded />
         </div>
       ) : (
