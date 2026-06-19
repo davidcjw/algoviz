@@ -52,7 +52,7 @@ export default function Home() {
               <Reveal>
                 <span className="chip text-slate-300">
                   <Sparkles size={13} className="text-algo" />
-                  Interactive CS, visualized
+                  Algorithms, visualized
                 </span>
               </Reveal>
 
