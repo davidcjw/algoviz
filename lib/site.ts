@@ -12,6 +12,7 @@ export const SITE_URL = (
 ).replace(/\/$/, "");
 
 export const SITE_NAME = "AlgoViz";
+export const GITHUB_URL = "https://github.com/davidcjw/algoviz";
 export const SITE_DESCRIPTION =
   "The ultimate visual playground for mastering data structures, algorithms, and system design. Learn by watching concepts come alive — animated, interactive, unforgettable.";
 

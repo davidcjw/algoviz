@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowRight, Eye, Gauge, MousePointerClick, Sparkles } from "lucide-react";
+import { ArrowRight, Eye, Gauge, Github, MousePointerClick, Sparkles, Star } from "lucide-react";
 import { Background } from "@/components/Background";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
@@ -9,7 +9,7 @@ import { TopicMarquee } from "@/components/landing/TopicMarquee";
 import { PillarCards } from "@/components/landing/PillarCards";
 import { LinkedListDemo } from "@/components/landing/LinkedListDemo";
 import { TOPICS } from "@/lib/content";
-import { SITE_URL, SITE_NAME, SITE_DESCRIPTION } from "@/lib/site";
+import { SITE_URL, SITE_NAME, SITE_DESCRIPTION, GITHUB_URL } from "@/lib/site";
 
 const jsonLd = {
   "@context": "https://schema.org",
@@ -89,6 +89,19 @@ export default function Home() {
                     <MousePointerClick size={18} className="text-ds" />
                     Try a visualizer
                   </Link>
+                  <a
+                    href={GITHUB_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group inline-flex items-center gap-2 rounded-xl border border-line bg-white/5 px-6 py-3.5 font-semibold text-coal backdrop-blur transition-colors hover:bg-white/10"
+                  >
+                    <Github size={18} />
+                    Star on GitHub
+                    <Star
+                      size={16}
+                      className="text-amber-500 transition-transform group-hover:scale-110 group-hover:fill-amber-400"
+                    />
+                  </a>
                 </div>
               </Reveal>
 
