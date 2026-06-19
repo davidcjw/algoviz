@@ -71,10 +71,10 @@ export default function Home() {
               </Reveal>
 
               <Reveal i={3}>
-                <div className="mt-9 flex flex-wrap items-center gap-3">
+                <div className="mt-9 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
                   <Link
                     href="/learn"
-                    className="group inline-flex items-center gap-2 rounded-xl bg-brand px-6 py-3.5 font-semibold text-white transition-transform hover:scale-[1.03] active:scale-95"
+                    className="group inline-flex w-full items-center justify-center gap-2 rounded-xl bg-brand px-5 py-3.5 font-semibold text-white transition-transform hover:scale-[1.03] active:scale-95 sm:w-auto sm:justify-start"
                   >
                     Start exploring
                     <ArrowRight
@@ -84,7 +84,7 @@ export default function Home() {
                   </Link>
                   <Link
                     href="/data-structures/linked-list"
-                    className="inline-flex items-center gap-2 rounded-xl border border-line bg-white/5 px-6 py-3.5 font-semibold text-coal backdrop-blur transition-colors hover:bg-white/10"
+                    className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-line bg-white/5 px-5 py-3.5 font-semibold text-coal backdrop-blur transition-colors hover:bg-white/10 sm:w-auto sm:justify-start"
                   >
                     <MousePointerClick size={18} className="text-ds" />
                     Try a visualizer
@@ -93,7 +93,7 @@ export default function Home() {
                     href={GITHUB_URL}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="group inline-flex items-center gap-2 rounded-xl border border-line bg-white/5 px-6 py-3.5 font-semibold text-coal backdrop-blur transition-colors hover:bg-white/10"
+                    className="group inline-flex w-full items-center justify-center gap-2 rounded-xl border border-line bg-white/5 px-5 py-3.5 font-semibold text-coal backdrop-blur transition-colors hover:bg-white/10 sm:w-auto sm:justify-start"
                   >
                     <Github size={18} />
                     Star on GitHub
