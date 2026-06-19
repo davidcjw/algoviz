@@ -71,34 +71,36 @@ export default function Home() {
               </Reveal>
 
               <Reveal i={3}>
-                <div className="mt-9 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
-                  <Link
-                    href="/learn"
-                    className="group inline-flex w-full items-center justify-center gap-2 rounded-xl bg-brand px-5 py-3.5 font-semibold text-white transition-transform hover:scale-[1.03] active:scale-95 sm:w-auto sm:justify-start"
-                  >
-                    Start exploring
-                    <ArrowRight
-                      size={18}
-                      className="transition-transform group-hover:translate-x-1"
-                    />
-                  </Link>
-                  <Link
-                    href="/data-structures/linked-list"
-                    className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-line bg-white/5 px-5 py-3.5 font-semibold text-coal backdrop-blur transition-colors hover:bg-white/10 sm:w-auto sm:justify-start"
-                  >
-                    <MousePointerClick size={18} className="text-ds" />
-                    Try a visualizer
-                  </Link>
+                <div className="mt-9 space-y-3">
+                  <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+                    <Link
+                      href="/learn"
+                      className="group inline-flex w-full items-center justify-center gap-2 rounded-xl bg-brand px-6 py-3.5 font-semibold text-white transition-transform hover:scale-[1.03] active:scale-95 sm:w-auto sm:justify-start"
+                    >
+                      Start exploring
+                      <ArrowRight
+                        size={18}
+                        className="transition-transform group-hover:translate-x-1"
+                      />
+                    </Link>
+                    <Link
+                      href="/data-structures/linked-list"
+                      className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-line bg-white/5 px-6 py-3.5 font-semibold text-coal backdrop-blur transition-colors hover:bg-white/10 sm:w-auto sm:justify-start"
+                    >
+                      <MousePointerClick size={18} className="text-ds" />
+                      Try a visualizer
+                    </Link>
+                  </div>
                   <a
                     href={GITHUB_URL}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="group inline-flex w-full items-center justify-center gap-2 rounded-xl border border-line bg-white/5 px-5 py-3.5 font-semibold text-coal backdrop-blur transition-colors hover:bg-white/10 sm:w-auto sm:justify-start"
+                    className="group inline-flex w-full items-center justify-center gap-2 rounded-xl border border-line bg-white/5 px-5 py-2.5 text-sm font-semibold text-slate-500 backdrop-blur transition-colors hover:bg-white/10 hover:text-coal sm:w-auto sm:justify-start"
                   >
-                    <Github size={18} />
+                    <Github size={16} />
                     Star on GitHub
                     <Star
-                      size={16}
+                      size={14}
                       className="text-amber-500 transition-transform group-hover:scale-110 group-hover:fill-amber-400"
                     />
                   </a>
