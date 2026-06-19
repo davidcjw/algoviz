@@ -99,7 +99,7 @@ export function CodeBlock({
   return (
     <div
       className={cn(
-        "relative overflow-hidden bg-[#13161d]",
+        "relative overflow-hidden bg-[#13161d] selection:bg-[#3a4a66] selection:text-white",
         embedded
           ? "h-full"
           : "rounded-xl border border-[#262b36] shadow-[0_1px_2px_rgba(22,26,34,0.06)]",
