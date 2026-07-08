@@ -18,6 +18,11 @@ import { UnionFindViz } from "./UnionFindViz";
 import { BacktrackingViz } from "./BacktrackingViz";
 import { DPViz } from "./DPViz";
 import {
+  CapTheoremViz,
+  DnsViz,
+  CdnViz,
+  ReverseProxyViz,
+  DatabaseReplicationViz,
   LoadBalancingViz,
   CachingViz,
   ShardingViz,
@@ -91,6 +96,16 @@ function renderViz(slug: string) {
       return <BacktrackingViz />;
     case "dynamic-programming":
       return <DPViz />;
+    case "cap-theorem":
+      return <CapTheoremViz />;
+    case "dns":
+      return <DnsViz />;
+    case "cdn":
+      return <CdnViz />;
+    case "reverse-proxy":
+      return <ReverseProxyViz />;
+    case "database-replication":
+      return <DatabaseReplicationViz />;
     case "load-balancing":
       return <LoadBalancingViz />;
     case "caching":

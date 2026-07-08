@@ -693,6 +693,30 @@ print(coin_change([1, 2, 5], 11))   # => 3   (5 + 5 + 1)
 print(climb_stairs(10))             # => 89
 `,
 
+  dns: `
+# Toy DNS resolver with a TTL-based cache — the second lookup skips the walk.
+import time
+
+class DnsCache:
+    def __init__(self):
+        self.store = {}  # name -> (ip, expires_at)
+
+    def resolve(self, name, walk_hierarchy):
+        hit = self.store.get(name)
+        if hit and hit[1] > time.monotonic():
+            return hit[0], "cache hit"
+        ip, ttl = walk_hierarchy(name)   # root -> TLD -> authoritative NS
+        self.store[name] = (ip, time.monotonic() + ttl)
+        return ip, "cache miss — walked the hierarchy and cached"
+
+def walk_hierarchy(name):
+    return "93.184.216.34", 8   # pretend authoritative answer, 8s TTL
+
+cache = DnsCache()
+print(cache.resolve("example.com", walk_hierarchy))  # => ('93.184.216.34', 'cache miss — walked the hierarchy and cached')
+print(cache.resolve("example.com", walk_hierarchy))  # => ('93.184.216.34', 'cache hit')
+`,
+
   "consistent-hashing": `
 # Consistent hashing ring with virtual nodes (replicas) for even spread.
 import bisect, hashlib

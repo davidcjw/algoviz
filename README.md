@@ -24,7 +24,7 @@ The ultimate **visual** playground for mastering data structures, algorithms, an
 
 ## What's inside
 
-**32 interactive, animated visualizers** across three pillars:
+**37 interactive, animated visualizers** across three pillars:
 
 ### Data Structures (teal)
 Array · Linked List · Doubly Linked List · Stack · Queue · Hash Table · Binary Search Tree · Heap / Priority Queue · Trie · Graph · Union-Find (DSU)
@@ -33,7 +33,7 @@ Array · Linked List · Doubly Linked List · Stack · Queue · Hash Table · Bi
 Bubble / Selection / Insertion / Merge / Quick Sort · Linear & Binary Search · BFS · DFS · Dijkstra · Two Pointers · Sliding Window · Recursion & the Call Stack · Backtracking (N-Queens) · Dynamic Programming
 
 ### System Design (ochre)
-Load Balancing · Caching (cache-aside / read-through / write-through / write-behind) · Sharding · Consistent Hashing · Message Queues · Rate Limiting (token bucket / leaky bucket / fixed & sliding window)
+CAP Theorem · Load Balancing · Caching (cache-aside / read-through / write-through / write-behind) · Sharding · Consistent Hashing · Message Queues · Rate Limiting (token bucket / leaky bucket / fixed & sliding window) · DNS Resolution · CDN (push / pull) · Reverse Proxy · Database Replication (master-slave / master-master)
 
 Every topic ships with a hands-on visualizer (play / step / shuffle / speed controls or direct manipulation), a Big-O complexity table, mental models, real use cases, and common pitfalls.
 
@@ -117,7 +117,7 @@ Distributed under the MIT License. See [LICENSE](LICENSE) for details.
 - [ ] Scale wide tree visualizers to fit on mobile (currently scroll)
 - [ ] More data structures: AVL / Red-Black trees, Segment Tree, B-Tree
 - [ ] More algorithms: A\*, Topological Sort, Kruskal / Prim MST, KMP
-- [ ] More system design: CDN, Replication, CAP theorem, API Gateway
+- [ ] More system design: API Gateway, SQL vs NoSQL, microservices / service discovery
 - [ ] A guided "learning path" mode with progress tracking
 - [ ] Code snippets (multi-language) alongside each visualizer
 
@@ -125,6 +125,7 @@ Distributed under the MIT License. See [LICENSE](LICENSE) for details.
 
 - [Next.js](https://nextjs.org) · [Framer Motion](https://www.framer.com/motion/) · [Tailwind CSS](https://tailwindcss.com) · [Lucide](https://lucide.dev)
 - Typography: [Bricolage Grotesque](https://fonts.google.com/specimen/Bricolage+Grotesque), [Sora](https://fonts.google.com/specimen/Sora), [JetBrains Mono](https://www.jetbrains.com/lp/mono/)
+- Several system-design topics were expanded with concepts from [donnemartin/system-design-primer](https://github.com/donnemartin/system-design-primer) (CC BY 4.0), rewritten in AlgoViz's own voice and turned into interactive visualizers.
 
 ---
 
