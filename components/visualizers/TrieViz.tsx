@@ -150,10 +150,10 @@ export function TrieViz() {
               <motion.div
                 key={p.node.id}
                 layout
-                initial={{ scale: 0, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
+                initial={{ scale: 0, opacity: 0, x: "-50%", y: "-50%" }}
+                animate={{ scale: 1, opacity: 1, x: "-50%", y: "-50%" }}
                 transition={{ type: "spring", stiffness: 440, damping: 26 }}
-                className="absolute grid h-8 w-8 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full border font-mono text-sm font-semibold"
+                className="absolute grid h-8 w-8 place-items-center rounded-full border font-mono text-sm font-semibold"
                 style={{
                   left: px(p.x),
                   top: py(p.y),

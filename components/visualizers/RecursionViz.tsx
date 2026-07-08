@@ -105,10 +105,12 @@ export function RecursionViz() {
                   animate={{
                     opacity: visible ? 1 : 0.18,
                     scale: active ? 1.12 : 1,
+                    x: "-50%",
+                    y: "-50%",
                     borderColor: active ? "#161A22" : ret ? ACCENT.algo.raw : "rgba(148,163,184,0.3)",
                     backgroundColor: active ? "rgba(22,26,34,0.10)" : ret ? "rgba(77,124,15,0.16)" : "rgba(22,26,34,0.05)",
                   }}
-                  className="absolute grid h-9 w-9 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full border font-mono text-2xs font-semibold text-coal"
+                  className="absolute grid h-9 w-9 place-items-center rounded-full border font-mono text-2xs font-semibold text-coal"
                   style={{ left: px(n.x), top: py(n.y) }}
                 >
                   {ret ? f.returned[n.id] : n.n}
