@@ -1153,6 +1153,9 @@ export function DnsViz() {
     setTtl(0);
   };
 
+  // Play has nothing to play until a request has been made — kick one off instead of no-op'ing.
+  const handleToggle = () => (script === "idle" ? resolve() : toggle());
+
   const frame = frames[Math.min(index, frames.length - 1)];
   const isActive = (key: string) => frame.active.includes(key);
   const edgeColor = (a: string, b: string) => (isActive(a) && isActive(b) ? AMBER : "rgba(148,163,184,0.25)");
@@ -1166,7 +1169,7 @@ export function DnsViz() {
         <Transport
           accent={sys}
           playing={playing}
-          onToggle={toggle}
+          onToggle={handleToggle}
           onStep={step}
           onBack={back}
           onReset={reset}
@@ -1306,6 +1309,9 @@ export function CdnViz() {
     setTtl(0);
   };
 
+  // Play has nothing to play until a request has been made — kick one off instead of no-op'ing.
+  const handleToggle = () => (script === "idle" ? request() : toggle());
+
   const frame = frames[Math.min(index, frames.length - 1)];
   const isActive = (key: string) => frame.active.includes(key);
   const edgeColor = (a: string, b: string) => (isActive(a) && isActive(b) ? AMBER : "rgba(148,163,184,0.25)");
@@ -1319,7 +1325,7 @@ export function CdnViz() {
         <Transport
           accent={sys}
           playing={playing}
-          onToggle={toggle}
+          onToggle={handleToggle}
           onStep={step}
           onBack={back}
           onReset={reset}
@@ -1427,6 +1433,9 @@ export function ReverseProxyViz() {
     setPlaying(false);
   };
 
+  // Play has nothing to play until a request has been sent — default to the dynamic-request flow.
+  const handleToggle = () => (script === "idle" ? send("dynamic") : toggle());
+
   const frame = frames[Math.min(index, frames.length - 1)];
   const isActive = (key: string) => frame.active.includes(key);
   const edgeColor = (a: string, b: string) => (isActive(a) && isActive(b) ? AMBER : "rgba(148,163,184,0.25)");
@@ -1440,7 +1449,7 @@ export function ReverseProxyViz() {
         <Transport
           accent={sys}
           playing={playing}
-          onToggle={toggle}
+          onToggle={handleToggle}
           onStep={step}
           onBack={back}
           onReset={reset}
