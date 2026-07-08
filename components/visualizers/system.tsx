@@ -154,10 +154,10 @@ function FlowStage({ active, stepMs, reduce, cacheSlot, dbSlot }: {
       <div className="absolute left-[14%] right-[14%] top-[24px] border-t border-dashed border-line" />
       <AnimatePresence>
         {active && (
-          <motion.span key={active.seq} className="absolute top-[24px] z-20 h-3 w-3 -translate-y-1/2 rounded-full"
+          <motion.span key={active.seq} className="absolute top-[24px] z-20 h-3 w-3 rounded-full"
             style={{ background: TONE[active.tone], boxShadow: `0 0 12px ${TONE[active.tone]}` }}
-            initial={{ left: ANCHOR[active.from], opacity: 0, scale: 0.5 }}
-            animate={{ left: ANCHOR[active.to], opacity: 1, scale: 1 }} exit={{ opacity: 0 }}
+            initial={{ left: ANCHOR[active.from], opacity: 0, scale: 0.5, y: "-50%" }}
+            animate={{ left: ANCHOR[active.to], opacity: 1, scale: 1, y: "-50%" }} exit={{ opacity: 0 }}
             transition={{ duration: reduce ? 0 : stepMs / 1000, ease: "easeInOut" }} />
         )}
       </AnimatePresence>
@@ -761,8 +761,9 @@ function LeakyBucketViz() {
           </div>
           <div className="relative mt-0.5 h-6 w-3 rounded-b-sm border-x-2 border-b-2 border-sys/30">
             {!reduce && (
-              <motion.span className="absolute left-1/2 top-0 h-2 w-2 -translate-x-1/2 rounded-full bg-sys"
-                animate={{ y: [0, 22], opacity: [1, 0] }} transition={{ duration: LEAK_MS / 1000, repeat: Infinity, ease: "easeIn" }} />
+              <motion.span className="absolute left-1/2 top-0 h-2 w-2 rounded-full bg-sys"
+                initial={{ x: "-50%" }}
+                animate={{ x: "-50%", y: [0, 22], opacity: [1, 0] }} transition={{ duration: LEAK_MS / 1000, repeat: Infinity, ease: "easeIn" }} />
             )}
           </div>
           <span className="mt-1.5 font-mono text-2xs uppercase text-slate-500">drains 1/1.1s · constant</span>
@@ -870,9 +871,9 @@ function SlidingWindowViz() {
             <div className="absolute right-0 top-0 h-full w-px bg-sys/50" />
             <AnimatePresence>
               {marks.map((m) => (
-                <motion.span key={m} className="absolute top-1/2 h-7 w-1.5 -translate-y-1/2 rounded-full bg-sys shadow-[0_0_8px] shadow-sys"
-                  initial={{ left: "calc(100% - 6px)" }}
-                  animate={{ left: reduce ? "calc(100% - 6px)" : "0%" }}
+                <motion.span key={m} className="absolute top-1/2 h-7 w-1.5 rounded-full bg-sys shadow-[0_0_8px] shadow-sys"
+                  initial={{ left: "calc(100% - 6px)", y: "-50%" }}
+                  animate={{ left: reduce ? "calc(100% - 6px)" : "0%", y: "-50%" }}
                   exit={{ opacity: 0, scale: 0 }}
                   transition={{ duration: reduce ? 0 : WINDOW_MS / 1000, ease: "linear" }} />
               ))}
