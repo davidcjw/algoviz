@@ -122,7 +122,6 @@ export function HeapViz() {
             return (
               <motion.div
                 key={i}
-                layout
                 className="absolute grid h-10 w-10 place-items-center rounded-full border font-mono text-sm font-semibold"
                 animate={{
                   x: "-50%",
