@@ -2,8 +2,9 @@
 
 import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
-import { Server, Database, Box, Cpu, User } from "lucide-react";
-import { VizShell, ACCENT } from "./shell";
+import { Server, Database, Box, Cpu, User, Globe, Monitor } from "lucide-react";
+import { VizShell, ACCENT, Transport, useFramePlayer } from "./shell";
+import { cn } from "@/lib/utils";
 
 const sys = "sys" as const;
 const AMBER = ACCENT.sys.raw;
@@ -886,6 +887,804 @@ function SlidingWindowViz() {
       <p className="mt-5 text-center font-mono text-xs text-slate-300">
         Counts only requests inside the rolling window. Smoother and fairer than fixed window — no edge bursts, more state to track.
       </p>
+    </VizShell>
+  );
+}
+
+/* ───────────────── CAP Theorem ───────────────── */
+
+type CapMode = "CP" | "AP";
+type CapLogEntry = { id: number; text: string; tone: "ok" | "bad" | "warn" };
+
+export function CapTheoremViz() {
+  const [mode, setMode] = useState<CapMode>("CP");
+  const [partitioned, setPartitioned] = useState(false);
+  const [values, setValues] = useState({ A: 1, B: 1, C: 1 });
+  const [diverged, setDiverged] = useState(false);
+  const [blocked, setBlocked] = useState(false);
+  const [log, setLog] = useState<CapLogEntry[]>([]);
+  const lid = useRef(0);
+
+  const pushLog = (text: string, tone: CapLogEntry["tone"]) =>
+    setLog((l) => [{ id: lid.current++, text, tone }, ...l].slice(0, 5));
+
+  const togglePartition = () => {
+    if (partitioned) {
+      if (mode === "AP" && diverged) pushLog("Partition healed — conflict resolved (last write wins), C re-synced.", "warn");
+      else pushLog("Partition healed — cluster back in sync.", "ok");
+      setValues((v) => ({ ...v, C: v.A }));
+      setDiverged(false);
+      setPartitioned(false);
+    } else {
+      pushLog("Network partition — C is cut off from A and B.", "bad");
+      setPartitioned(true);
+    }
+  };
+
+  const writeMajority = () => {
+    const next = values.A + 1;
+    setValues((v) => ({ A: next, B: next, C: partitioned ? v.C : next }));
+    pushLog(`write x=${next} on A → replicated to B` + (partitioned ? "" : " and C"), "ok");
+  };
+
+  const writeIsolated = () => {
+    if (mode === "CP") {
+      setBlocked(true);
+      window.setTimeout(() => setBlocked(false), 450);
+      pushLog("write on C → blocked (can't guarantee consistency while partitioned)", "bad");
+    } else {
+      const next = values.C + 1;
+      setValues((v) => ({ ...v, C: next }));
+      setDiverged(true);
+      pushLog(`write x=${next} on C → accepted locally, now diverged from A/B`, "warn");
+    }
+  };
+
+  const reset = () => {
+    setValues({ A: 1, B: 1, C: 1 });
+    setPartitioned(false);
+    setDiverged(false);
+    setBlocked(false);
+    setLog([]);
+  };
+
+  return (
+    <VizShell
+      accent={sys}
+      title="cap_theorem"
+      status={mode === "CP" ? "consistency + partition tolerance" : "availability + partition tolerance"}
+      controls={
+        <div className="flex flex-wrap items-center gap-2">
+          <button onClick={togglePartition} className={rlBtn}>
+            {partitioned ? "heal partition" : "simulate partition"}
+          </button>
+          <button onClick={writeMajority} className={rlReset}>
+            write on A/B
+          </button>
+          <button
+            onClick={writeIsolated}
+            disabled={!partitioned}
+            className={cn(rlReset, "disabled:cursor-not-allowed disabled:opacity-30")}
+          >
+            write on C{partitioned ? " (isolated)" : ""}
+          </button>
+          <button onClick={reset} className={rlReset}>
+            reset
+          </button>
+        </div>
+      }
+    >
+      <div className="flex flex-col items-center gap-5">
+        <div className="flex gap-1.5 rounded-lg border border-line bg-white/5 p-1">
+          {(["CP", "AP"] as CapMode[]).map((m) => (
+            <button
+              key={m}
+              onClick={() => setMode(m)}
+              className={cn(
+                "rounded-md px-3 py-1 font-mono text-2xs uppercase tracking-wider transition-colors",
+                mode === m ? "bg-sys/20 text-sys" : "text-slate-400 hover:text-coal",
+              )}
+            >
+              {m === "CP" ? "CP — consistency" : "AP — availability"}
+            </button>
+          ))}
+        </div>
+
+        <div className="relative" style={{ width: 300, height: 210 }}>
+          <svg className="absolute inset-0" width={300} height={210}>
+            <line x1={70} y1={170} x2={230} y2={170} stroke={`${AMBER}59`} strokeWidth="2" />
+            <line
+              x1={70} y1={170} x2={150} y2={36}
+              stroke={partitioned ? "#f43f5e" : "rgba(148,163,184,0.3)"}
+              strokeWidth="2"
+              strokeDasharray={partitioned ? "5 5" : undefined}
+            />
+            <line
+              x1={230} y1={170} x2={150} y2={36}
+              stroke={partitioned ? "#f43f5e" : "rgba(148,163,184,0.3)"}
+              strokeWidth="2"
+              strokeDasharray={partitioned ? "5 5" : undefined}
+            />
+          </svg>
+          <CapNode x={150} y={36} label="C" value={values.C} isolated={partitioned} diverged={diverged} blocked={blocked} />
+          <CapNode x={70} y={170} label="A" value={values.A} />
+          <CapNode x={230} y={170} label="B" value={values.B} />
+        </div>
+
+        <p className="max-w-md text-center font-mono text-2xs leading-relaxed text-slate-400">
+          {partitioned
+            ? mode === "CP"
+              ? "C is cut off. In CP mode, writes on C are rejected outright rather than risk an inconsistent read."
+              : "C is cut off but still accepting writes. It can now silently diverge from A/B until the partition heals."
+            : "All three replicas agree. Trigger a partition to see the CAP tradeoff in action."}
+        </p>
+
+        <CapLog log={log} />
+      </div>
+    </VizShell>
+  );
+}
+
+function CapNode({
+  x, y, label, value, isolated, diverged, blocked,
+}: {
+  x: number; y: number; label: string; value: number; isolated?: boolean; diverged?: boolean; blocked?: boolean;
+}) {
+  return (
+    <div className="absolute" style={{ left: x, top: y, transform: "translate(-50%, -50%)" }}>
+      <motion.div
+        animate={blocked ? { x: [0, -6, 6, -6, 6, 0] } : { x: 0 }}
+        transition={{ duration: 0.4 }}
+        className="flex flex-col items-center gap-1"
+      >
+        <div
+          className={cn(
+            "grid h-14 w-14 place-items-center rounded-full border-2 transition-colors duration-300",
+            blocked
+              ? "border-rose-400 bg-rose-400/25"
+              : isolated
+                ? "border-rose-400/60 bg-rose-400/10"
+                : "border-sys/40 bg-sys/10",
+          )}
+        >
+          <Database size={18} className={isolated ? "text-rose-300" : "text-sys"} />
+        </div>
+        <span className="font-mono text-2xs text-slate-500">{label}</span>
+        <span className={cn("font-mono text-2xs font-semibold", diverged ? "text-amber-300" : "text-slate-200")}>
+          x={value}
+          {diverged && " *"}
+        </span>
+      </motion.div>
+    </div>
+  );
+}
+
+function CapLog({ log }: { log: CapLogEntry[] }) {
+  const toneClass: Record<CapLogEntry["tone"], string> = {
+    ok: "text-emerald-300",
+    bad: "text-rose-300",
+    warn: "text-amber-300",
+  };
+  return (
+    <div className="w-full max-w-md space-y-1">
+      <AnimatePresence mode="popLayout">
+        {log.map((l) => (
+          <motion.div
+            key={l.id} layout initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0 }}
+            className={cn("font-mono text-2xs", toneClass[l.tone])}
+          >
+            → {l.text}
+          </motion.div>
+        ))}
+      </AnimatePresence>
+    </div>
+  );
+}
+
+/* ───────────────── DNS Resolution ───────────────── */
+
+type DnsFrame = { active: string[]; note: string; tone?: "ok" | "info" };
+const DNS_TTL = 8;
+
+function dnsMissFrames(): DnsFrame[] {
+  return [
+    { active: [], note: "Browser needs the IP for example.com." },
+    { active: ["browser", "resolver"], note: "Ask the recursive resolver — nothing cached yet." },
+    { active: ["resolver", "root"], note: "Resolver asks a root server: who handles .com?" },
+    { active: ["resolver", "tld"], note: "Root refers it to the .com TLD server." },
+    { active: ["resolver", "auth"], note: "TLD refers it to example.com's authoritative name server." },
+    { active: ["resolver", "auth"], note: "Authoritative NS returns the A record: 93.184.216.34." },
+    { active: ["browser", "resolver"], note: `Resolver caches the answer for ${DNS_TTL}s and replies to the browser.` },
+    { active: ["browser"], note: "Browser connects directly to 93.184.216.34.", tone: "ok" },
+  ];
+}
+
+function dnsHitFrames(): DnsFrame[] {
+  return [
+    { active: [], note: "Browser needs the IP for example.com again." },
+    { active: ["browser", "resolver"], note: "Still cached — no root / TLD / authoritative round trip needed." },
+    { active: ["browser"], note: "Browser connects directly to 93.184.216.34.", tone: "ok" },
+  ];
+}
+
+const IDLE_DNS_FRAME: DnsFrame[] = [{ active: [], note: "Click resolve to look up example.com." }];
+
+export function DnsViz() {
+  const [script, setScript] = useState<"idle" | "miss" | "hit">("idle");
+  const frames = script === "miss" ? dnsMissFrames() : script === "hit" ? dnsHitFrames() : IDLE_DNS_FRAME;
+  const { index, setIndex, playing, setPlaying, speed, setSpeed, step, back, toggle } = useFramePlayer(frames.length, { baseMs: 750 });
+  const [cached, setCached] = useState(false);
+  const [ttl, setTtl] = useState(0);
+  const cachedTriggered = useRef(false);
+
+  useEffect(() => {
+    cachedTriggered.current = false;
+  }, [script]);
+
+  useEffect(() => {
+    if (script === "miss" && frames.length > 1 && index === frames.length - 1 && !playing && !cachedTriggered.current) {
+      cachedTriggered.current = true;
+      setCached(true);
+      setTtl(DNS_TTL);
+    }
+  }, [index, playing, script, frames.length]);
+
+  useEffect(() => {
+    if (!cached) return;
+    if (ttl <= 0) {
+      setCached(false);
+      return;
+    }
+    const t = setTimeout(() => setTtl((s) => s - 1), 1000);
+    return () => clearTimeout(t);
+  }, [cached, ttl]);
+
+  const resolve = () => {
+    setScript(cached && ttl > 0 ? "hit" : "miss");
+    setIndex(0);
+    setPlaying(true);
+  };
+
+  const reset = () => {
+    setScript("idle");
+    setIndex(0);
+    setPlaying(false);
+    setCached(false);
+    setTtl(0);
+  };
+
+  const frame = frames[Math.min(index, frames.length - 1)];
+  const isActive = (key: string) => frame.active.includes(key);
+  const edgeColor = (a: string, b: string) => (isActive(a) && isActive(b) ? AMBER : "rgba(148,163,184,0.25)");
+
+  return (
+    <VizShell
+      accent={sys}
+      title="dns_resolution"
+      status={cached ? `cached · expires in ${ttl}s` : "not cached"}
+      controls={
+        <Transport
+          accent={sys}
+          playing={playing}
+          onToggle={toggle}
+          onStep={step}
+          onBack={back}
+          onReset={reset}
+          speed={speed}
+          onSpeed={setSpeed}
+          extra={
+            <button onClick={resolve} disabled={playing} className={cn(rlBtn, "disabled:cursor-not-allowed disabled:opacity-30")}>
+              resolve example.com
+            </button>
+          }
+        />
+      }
+    >
+      <div className="relative h-56 w-full">
+        <svg className="absolute inset-0 h-full w-full" viewBox="0 0 420 220" preserveAspectRatio="none">
+          <line x1="60" y1="110" x2="185" y2="110" stroke={edgeColor("browser", "resolver")} strokeWidth="2" />
+          <line x1="185" y1="110" x2="360" y2="46" stroke={edgeColor("resolver", "root")} strokeWidth="2" />
+          <line x1="185" y1="110" x2="360" y2="110" stroke={edgeColor("resolver", "tld")} strokeWidth="2" />
+          <line x1="185" y1="110" x2="360" y2="174" stroke={edgeColor("resolver", "auth")} strokeWidth="2" />
+        </svg>
+        <Node className="absolute left-[8%] top-1/2 -translate-x-1/2 -translate-y-1/2" icon={<Monitor size={18} />} label="browser" accent={isActive("browser")} />
+        <Node className="absolute left-[44%] top-1/2 -translate-x-1/2 -translate-y-1/2" icon={<Server size={18} />} label="resolver" accent={isActive("resolver")} />
+        <Node className="absolute left-[86%] top-[21%] -translate-x-1/2 -translate-y-1/2" icon={<Globe size={18} />} label="root ." accent={isActive("root")} />
+        <Node className="absolute left-[86%] top-1/2 -translate-x-1/2 -translate-y-1/2" icon={<Globe size={18} />} label=".com TLD" accent={isActive("tld")} />
+        <Node className="absolute left-[86%] top-[79%] -translate-x-1/2 -translate-y-1/2" icon={<Database size={18} />} label="authoritative" accent={isActive("auth")} />
+      </div>
+      <p className={cn("mt-2 text-center font-mono text-xs", frame.tone === "ok" ? "text-emerald-300" : "text-slate-300")}>
+        {frame.note}
+      </p>
+    </VizShell>
+  );
+}
+
+/* ───────────────── Content Delivery Network ───────────────── */
+
+type CdnFrame = { active: string[]; note: string; tone?: "ok" | "warn" };
+const CDN_TTL = 6;
+
+function cdnMissFrames(): CdnFrame[] {
+  return [
+    { active: [], note: "Client requests /logo.png." },
+    { active: ["client", "edge"], note: "Nearest edge checks its cache — cold, nothing there yet." },
+    { active: ["edge", "origin"], note: "Edge pulls the asset from the origin server.", tone: "warn" },
+    { active: ["edge"], note: `Edge caches the response for ${CDN_TTL}s.` },
+    { active: ["client", "edge"], note: "Edge returns the asset — a full round trip, ~180ms." },
+  ];
+}
+
+function cdnHitFrames(): CdnFrame[] {
+  return [
+    { active: [], note: "Client requests /logo.png again." },
+    { active: ["client", "edge"], note: "Edge already has it cached — no origin trip.", tone: "ok" },
+    { active: ["client", "edge"], note: "Edge returns the asset — ~12ms round trip.", tone: "ok" },
+  ];
+}
+
+function cdnPushHitFrames(): CdnFrame[] {
+  return [
+    { active: [], note: "Client requests /logo.png." },
+    { active: ["client", "edge"], note: "Content was pushed to every edge ahead of time — always a hit.", tone: "ok" },
+    { active: ["client", "edge"], note: "Edge returns the asset — ~12ms round trip.", tone: "ok" },
+  ];
+}
+
+function cdnPushUpdateFrames(): CdnFrame[] {
+  return [
+    { active: [], note: "You publish a new /logo.png on the origin." },
+    { active: ["origin", "edge"], note: "It's uploaded straight to every edge — no client request needed.", tone: "ok" },
+    { active: ["edge"], note: "Every edge is warm before the first user ever asks for it.", tone: "ok" },
+  ];
+}
+
+const IDLE_CDN_FRAME: CdnFrame[] = [{ active: [], note: "Click 'request asset' to fetch /logo.png." }];
+
+export function CdnViz() {
+  const [mode, setMode] = useState<"pull" | "push">("pull");
+  const [cached, setCached] = useState(false);
+  const [ttl, setTtl] = useState(0);
+  const [script, setScript] = useState<"idle" | "miss" | "hit" | "push-hit" | "push-update">("idle");
+  const frames =
+    script === "miss" ? cdnMissFrames()
+    : script === "hit" ? cdnHitFrames()
+    : script === "push-hit" ? cdnPushHitFrames()
+    : script === "push-update" ? cdnPushUpdateFrames()
+    : IDLE_CDN_FRAME;
+  const { index, setIndex, playing, setPlaying, speed, setSpeed, step, back, toggle } = useFramePlayer(frames.length, { baseMs: 750 });
+  const cachedTriggered = useRef(false);
+
+  useEffect(() => {
+    cachedTriggered.current = false;
+  }, [script]);
+
+  useEffect(() => {
+    if (script === "miss" && frames.length > 1 && index === frames.length - 1 && !playing && !cachedTriggered.current) {
+      cachedTriggered.current = true;
+      setCached(true);
+      setTtl(CDN_TTL);
+    }
+  }, [index, playing, script, frames.length]);
+
+  useEffect(() => {
+    if (!cached) return;
+    if (ttl <= 0) {
+      setCached(false);
+      return;
+    }
+    const t = setTimeout(() => setTtl((s) => s - 1), 1000);
+    return () => clearTimeout(t);
+  }, [cached, ttl]);
+
+  const switchMode = (m: "pull" | "push") => {
+    setMode(m);
+    setScript("idle");
+    setIndex(0);
+    setPlaying(false);
+    setCached(false);
+    setTtl(0);
+  };
+
+  const request = () => {
+    setScript(mode === "push" ? "push-hit" : cached && ttl > 0 ? "hit" : "miss");
+    setIndex(0);
+    setPlaying(true);
+  };
+
+  const pushUpdate = () => {
+    setScript("push-update");
+    setIndex(0);
+    setPlaying(true);
+  };
+
+  const reset = () => {
+    setScript("idle");
+    setIndex(0);
+    setPlaying(false);
+    setCached(false);
+    setTtl(0);
+  };
+
+  const frame = frames[Math.min(index, frames.length - 1)];
+  const isActive = (key: string) => frame.active.includes(key);
+  const edgeColor = (a: string, b: string) => (isActive(a) && isActive(b) ? AMBER : "rgba(148,163,184,0.25)");
+
+  return (
+    <VizShell
+      accent={sys}
+      title="cdn"
+      status={mode === "push" ? "edge: always warm (pushed)" : cached ? `edge: cached · expires in ${ttl}s` : "edge: cold"}
+      controls={
+        <Transport
+          accent={sys}
+          playing={playing}
+          onToggle={toggle}
+          onStep={step}
+          onBack={back}
+          onReset={reset}
+          speed={speed}
+          onSpeed={setSpeed}
+          extra={
+            <div className="flex items-center gap-2">
+              <button onClick={request} disabled={playing} className={cn(rlBtn, "disabled:cursor-not-allowed disabled:opacity-30")}>
+                request asset
+              </button>
+              {mode === "push" && (
+                <button onClick={pushUpdate} disabled={playing} className={cn(rlReset, "disabled:cursor-not-allowed disabled:opacity-30")}>
+                  push update
+                </button>
+              )}
+            </div>
+          }
+        />
+      }
+    >
+      <div className="flex flex-col gap-4">
+        <div className="flex gap-1.5 rounded-lg border border-line bg-white/5 p-1 self-center">
+          {(["pull", "push"] as const).map((m) => (
+            <button
+              key={m}
+              onClick={() => switchMode(m)}
+              className={cn(
+                "rounded-md px-3 py-1 font-mono text-2xs uppercase tracking-wider transition-colors",
+                mode === m ? "bg-sys/20 text-sys" : "text-slate-400 hover:text-coal",
+              )}
+            >
+              {m === "pull" ? "pull CDN" : "push CDN"}
+            </button>
+          ))}
+        </div>
+
+        <div className="relative h-32 w-full">
+          <svg className="absolute inset-0 h-full w-full" viewBox="0 0 400 130" preserveAspectRatio="none">
+            <line x1="50" y1="65" x2="200" y2="65" stroke={edgeColor("client", "edge")} strokeWidth="2" />
+            <line x1="200" y1="65" x2="350" y2="65" stroke={edgeColor("edge", "origin")} strokeWidth="2" />
+          </svg>
+          <Node className="absolute left-[12%] top-1/2 -translate-x-1/2 -translate-y-1/2" icon={<Monitor size={18} />} label="client" accent={isActive("client")} />
+          <Node className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2" icon={<Box size={18} />} label="edge" accent={isActive("edge")} />
+          <Node className="absolute left-[88%] top-1/2 -translate-x-1/2 -translate-y-1/2" icon={<Database size={18} />} label="origin" accent={isActive("origin")} />
+        </div>
+
+        <p className={cn("text-center font-mono text-xs", frame.tone === "ok" ? "text-emerald-300" : frame.tone === "warn" ? "text-amber-300" : "text-slate-300")}>
+          {frame.note}
+        </p>
+      </div>
+    </VizShell>
+  );
+}
+
+/* ───────────────── Reverse Proxy ───────────────── */
+
+type ProxyFrame = { active: string[]; note: string; tone?: "ok" | "info" };
+
+function proxyDynamicFrames(): ProxyFrame[] {
+  return [
+    { active: [], note: "Client sends HTTPS GET /api/orders to the proxy's public IP." },
+    { active: ["client", "proxy"], note: "Proxy terminates SSL — decrypts once so backends don't have to.", tone: "info" },
+    { active: ["proxy", "backend"], note: "Proxy forwards the request to a backend the client never sees." },
+    { active: ["proxy", "backend"], note: "The backend handles it and replies to the proxy." },
+    { active: ["client", "proxy"], note: "Proxy re-encrypts and returns the response.", tone: "ok" },
+  ];
+}
+
+function proxyCachedFrames(): ProxyFrame[] {
+  return [
+    { active: [], note: "Client requests /api/orders again." },
+    { active: ["client", "proxy"], note: "Proxy already has this response cached.", tone: "ok" },
+    { active: ["client", "proxy"], note: "Served straight from the proxy — the backend is never touched.", tone: "ok" },
+  ];
+}
+
+function proxyStaticFrames(): ProxyFrame[] {
+  return [
+    { active: [], note: "Client requests /logo.png." },
+    { active: ["client", "proxy"], note: "Proxy serves the static file directly from its own disk.", tone: "ok" },
+    { active: ["client", "proxy"], note: "No backend involved for static assets.", tone: "ok" },
+  ];
+}
+
+const IDLE_PROXY_FRAME: ProxyFrame[] = [{ active: [], note: "Pick a request type below to send it through the proxy." }];
+
+export function ReverseProxyViz() {
+  const [script, setScript] = useState<"idle" | "dynamic" | "cached" | "static">("idle");
+  const frames =
+    script === "dynamic" ? proxyDynamicFrames()
+    : script === "cached" ? proxyCachedFrames()
+    : script === "static" ? proxyStaticFrames()
+    : IDLE_PROXY_FRAME;
+  const { index, playing, setIndex, setPlaying, speed, setSpeed, step, back, toggle } = useFramePlayer(frames.length, { baseMs: 750 });
+
+  const send = (s: "dynamic" | "cached" | "static") => {
+    setScript(s);
+    setIndex(0);
+    setPlaying(true);
+  };
+
+  const reset = () => {
+    setScript("idle");
+    setIndex(0);
+    setPlaying(false);
+  };
+
+  const frame = frames[Math.min(index, frames.length - 1)];
+  const isActive = (key: string) => frame.active.includes(key);
+  const edgeColor = (a: string, b: string) => (isActive(a) && isActive(b) ? AMBER : "rgba(148,163,184,0.25)");
+
+  return (
+    <VizShell
+      accent={sys}
+      title="reverse_proxy"
+      status="single public entry point"
+      controls={
+        <Transport
+          accent={sys}
+          playing={playing}
+          onToggle={toggle}
+          onStep={step}
+          onBack={back}
+          onReset={reset}
+          speed={speed}
+          onSpeed={setSpeed}
+          extra={
+            <div className="flex flex-wrap items-center gap-2">
+              <button onClick={() => send("dynamic")} disabled={playing} className={cn(rlBtn, "disabled:cursor-not-allowed disabled:opacity-30")}>
+                dynamic request
+              </button>
+              <button onClick={() => send("cached")} disabled={playing} className={cn(rlReset, "disabled:cursor-not-allowed disabled:opacity-30")}>
+                cached request
+              </button>
+              <button onClick={() => send("static")} disabled={playing} className={cn(rlReset, "disabled:cursor-not-allowed disabled:opacity-30")}>
+                static asset
+              </button>
+            </div>
+          }
+        />
+      }
+    >
+      <div className="flex flex-col gap-4">
+        <div className="relative h-32 w-full">
+          <svg className="absolute inset-0 h-full w-full" viewBox="0 0 400 130" preserveAspectRatio="none">
+            <line x1="50" y1="65" x2="200" y2="65" stroke={edgeColor("client", "proxy")} strokeWidth="2" />
+            <line x1="200" y1="65" x2="350" y2="65" stroke={edgeColor("proxy", "backend")} strokeWidth="2" />
+          </svg>
+          <Node className="absolute left-[12%] top-1/2 -translate-x-1/2 -translate-y-1/2" icon={<Monitor size={18} />} label="client" accent={isActive("client")} />
+          <Node className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2" icon={<Box size={18} />} label="reverse proxy" accent={isActive("proxy")} />
+          <Node className="absolute left-[88%] top-1/2 -translate-x-1/2 -translate-y-1/2" icon={<Server size={18} />} label="backend pool" accent={isActive("backend")} />
+        </div>
+
+        <p className={cn("text-center font-mono text-xs", frame.tone === "ok" ? "text-emerald-300" : frame.tone === "info" ? "text-sys" : "text-slate-300")}>
+          {frame.note}
+        </p>
+        <p className="text-center font-mono text-2xs text-slate-500">
+          The client only ever addresses the proxy — it can&apos;t tell how many backends exist, or which one answered.
+        </p>
+      </div>
+    </VizShell>
+  );
+}
+
+/* ───────────────── Database Replication ───────────────── */
+
+type ReplMode = "master-slave" | "master-master";
+type ReplLogEntry = { id: number; text: string; tone: "ok" | "bad" | "warn" };
+
+export function DatabaseReplicationViz() {
+  const [mode, setMode] = useState<ReplMode>("master-slave");
+  const [log, setLog] = useState<ReplLogEntry[]>([]);
+  const lid = useRef(0);
+  const pushLog = (text: string, tone: ReplLogEntry["tone"]) =>
+    setLog((l) => [{ id: lid.current++, text, tone }, ...l].slice(0, 5));
+
+  // master-slave state
+  const [master, setMaster] = useState(1);
+  const [slaves, setSlaves] = useState<[number, number]>([1, 1]);
+  const [masterDown, setMasterDown] = useState(false);
+  const [promoted, setPromoted] = useState<0 | 1 | null>(null);
+  const [replicating, setReplicating] = useState<[boolean, boolean]>([false, false]);
+
+  const writeMaster = () => {
+    if (masterDown) {
+      pushLog("No master — promote a slave before accepting writes.", "bad");
+      return;
+    }
+    const next = master + 1;
+    setMaster(next);
+    pushLog(`write x=${next} on master — replicating to both slaves.`, "ok");
+    [0, 1].forEach((i) => {
+      const delay = i === 0 ? 350 : 700;
+      setReplicating((r) => (i === 0 ? [true, r[1]] : [r[0], true]));
+      window.setTimeout(() => {
+        setSlaves((s) => (i === 0 ? [next, s[1]] : [s[0], next]));
+        setReplicating((r) => (i === 0 ? [false, r[1]] : [r[0], false]));
+      }, delay);
+    });
+  };
+
+  const failMaster = () => {
+    setMasterDown(true);
+    pushLog("Master failed — reads still served by slaves; writes are blocked until promotion.", "bad");
+  };
+
+  const promoteSlave = (i: 0 | 1) => {
+    setMaster(slaves[i]);
+    setMasterDown(false);
+    setPromoted(i);
+    pushLog(`Slave ${i + 1} promoted to master.`, "warn");
+  };
+
+  const resetMS = () => {
+    setMaster(1);
+    setSlaves([1, 1]);
+    setMasterDown(false);
+    setPromoted(null);
+    setReplicating([false, false]);
+    setLog([]);
+  };
+
+  // master-master state
+  const [mmA, setMmA] = useState(1);
+  const [mmB, setMmB] = useState(1);
+  const [dirtyA, setDirtyA] = useState(false);
+  const [dirtyB, setDirtyB] = useState(false);
+  const [lastWriter, setLastWriter] = useState<"A" | "B" | null>(null);
+
+  const writeA = () => {
+    const next = mmA + 1;
+    setMmA(next);
+    setDirtyA(true);
+    setLastWriter("A");
+    pushLog(`write x=${next} on A — not yet synced to B.`, "ok");
+  };
+  const writeB = () => {
+    const next = mmB + 1;
+    setMmB(next);
+    setDirtyB(true);
+    setLastWriter("B");
+    pushLog(`write x=${next} on B — not yet synced to A.`, "ok");
+  };
+  const sync = () => {
+    if (dirtyA && dirtyB) {
+      const winner = lastWriter === "A" ? mmA : mmB;
+      setMmA(winner);
+      setMmB(winner);
+      pushLog(
+        mmA === mmB
+          ? `Conflict — both wrote concurrently (converged on the same value by coincidence). Last write (${lastWriter}) wins: x=${winner}.`
+          : `Conflict — both wrote different values. Last write (${lastWriter}) wins: x=${winner}.`,
+        "warn",
+      );
+    } else if (dirtyA) {
+      setMmB(mmA);
+      pushLog("A → B replicated.", "ok");
+    } else if (dirtyB) {
+      setMmA(mmB);
+      pushLog("B → A replicated.", "ok");
+    } else {
+      pushLog("Already in sync.", "ok");
+    }
+    setDirtyA(false);
+    setDirtyB(false);
+  };
+
+  const resetMM = () => {
+    setMmA(1);
+    setMmB(1);
+    setDirtyA(false);
+    setDirtyB(false);
+    setLastWriter(null);
+    setLog([]);
+  };
+
+  const switchMode = (m: ReplMode) => {
+    setMode(m);
+    setLog([]);
+  };
+
+  return (
+    <VizShell
+      accent={sys}
+      title="database_replication"
+      status={mode === "master-slave" ? (masterDown ? "master down" : "healthy") : dirtyA && dirtyB ? "conflict pending" : "in sync"}
+      controls={
+        mode === "master-slave" ? (
+          <div className="flex flex-wrap items-center gap-2">
+            <button onClick={writeMaster} disabled={masterDown} className={cn(rlBtn, "disabled:cursor-not-allowed disabled:opacity-30")}>
+              write on master
+            </button>
+            {!masterDown ? (
+              <button onClick={failMaster} className={rlReset}>simulate master failure</button>
+            ) : (
+              <>
+                <button onClick={() => promoteSlave(0)} className={rlReset}>promote slave 1</button>
+                <button onClick={() => promoteSlave(1)} className={rlReset}>promote slave 2</button>
+              </>
+            )}
+            <button onClick={resetMS} className={rlReset}>reset</button>
+          </div>
+        ) : (
+          <div className="flex flex-wrap items-center gap-2">
+            <button onClick={writeA} className={rlBtn}>write on A</button>
+            <button onClick={writeB} className={rlBtn}>write on B</button>
+            <button onClick={sync} className={rlReset}>sync</button>
+            <button onClick={resetMM} className={rlReset}>reset</button>
+          </div>
+        )
+      }
+    >
+      <div className="flex flex-col gap-4">
+        <div className="flex gap-1.5 rounded-lg border border-line bg-white/5 p-1 self-center">
+          {(["master-slave", "master-master"] as ReplMode[]).map((m) => (
+            <button
+              key={m}
+              onClick={() => switchMode(m)}
+              className={cn(
+                "rounded-md px-3 py-1 font-mono text-2xs uppercase tracking-wider transition-colors",
+                mode === m ? "bg-sys/20 text-sys" : "text-slate-400 hover:text-coal",
+              )}
+            >
+              {m === "master-slave" ? "master-slave" : "master-master"}
+            </button>
+          ))}
+        </div>
+
+        {mode === "master-slave" ? (
+          <div className="relative h-48 w-full">
+            <svg className="absolute inset-0 h-full w-full" viewBox="0 0 400 192" preserveAspectRatio="none">
+              <line x1="60" y1="96" x2="330" y2="42" stroke={replicating[0] ? AMBER : "rgba(148,163,184,0.25)"} strokeWidth="2" />
+              <line x1="60" y1="96" x2="330" y2="150" stroke={replicating[1] ? AMBER : "rgba(148,163,184,0.25)"} strokeWidth="2" />
+            </svg>
+            <Node
+              className="absolute left-[15%] top-1/2 -translate-x-1/2 -translate-y-1/2"
+              icon={<Database size={18} />}
+              label={`${masterDown ? "master (down)" : "master"} · x=${master}`}
+              accent={!masterDown}
+            />
+            <Node
+              className="absolute left-[83%] top-[22%] -translate-x-1/2 -translate-y-1/2"
+              icon={<Database size={18} />}
+              label={`${promoted === 0 ? "slave 1 (master ★)" : "slave 1"} · x=${slaves[0]}`}
+              accent={replicating[0] || promoted === 0}
+            />
+            <Node
+              className="absolute left-[83%] top-[78%] -translate-x-1/2 -translate-y-1/2"
+              icon={<Database size={18} />}
+              label={`${promoted === 1 ? "slave 2 (master ★)" : "slave 2"} · x=${slaves[1]}`}
+              accent={replicating[1] || promoted === 1}
+            />
+          </div>
+        ) : (
+          <div className="relative h-36 w-full">
+            <svg className="absolute inset-0 h-full w-full" viewBox="0 0 400 144" preserveAspectRatio="none">
+              <line x1="90" y1="72" x2="310" y2="72" stroke={dirtyA || dirtyB ? AMBER : "rgba(148,163,184,0.25)"} strokeWidth="2" />
+            </svg>
+            <Node className="absolute left-[22%] top-1/2 -translate-x-1/2 -translate-y-1/2" icon={<Database size={18} />} label={`master A · x=${mmA}${dirtyA ? " *" : ""}`} accent={dirtyA} />
+            <Node className="absolute left-[78%] top-1/2 -translate-x-1/2 -translate-y-1/2" icon={<Database size={18} />} label={`master B · x=${mmB}${dirtyB ? " *" : ""}`} accent={dirtyB} />
+          </div>
+        )}
+
+        <CapLog log={log} />
+      </div>
     </VizShell>
   );
 }
