@@ -314,27 +314,6 @@ export const TOPICS: Topic[] = [
     ],
     useCases: ["Social & road networks", "Dependency resolution", "Recommendation systems"],
   },
-  {
-    slug: "union-find",
-    title: "Union-Find (DSU)",
-    pillar: "data-structures",
-    category: "Graph",
-    tagline: "Near-constant merge & connectivity checks.",
-    summary:
-      "Disjoint-Set Union tracks elements partitioned into groups, answering 'are these two connected?' and 'merge these groups' in almost O(1) using path compression and union by rank. It's the heart of Kruskal's MST and cycle detection.",
-    difficulty: "Advanced",
-    live: true,
-    complexity: [
-      { label: "Find", value: "O(α(n))", note: "inverse Ackermann ≈ 1" },
-      { label: "Union", value: "O(α(n))" },
-      { label: "Space", value: "O(n)" },
-    ],
-    insights: [
-      "Path compression flattens trees on every find.",
-      "Union by rank attaches the smaller tree under the larger.",
-    ],
-    useCases: ["Kruskal's MST", "Connected components", "Cycle detection"],
-  },
 
   // ───────────────────────── Algorithms ─────────────────────────
   {
@@ -546,6 +525,69 @@ export const TOPICS: Topic[] = [
     ],
     pitfalls: ["Fails with negative edges — use Bellman-Ford instead."],
     useCases: ["GPS routing", "Network latency", "Game pathfinding"],
+  },
+  {
+    slug: "bellman-ford",
+    title: "Bellman-Ford",
+    pillar: "algorithms",
+    category: "Graph",
+    tagline: "Shortest paths that tolerate negative edges.",
+    summary:
+      "Bellman-Ford finds shortest paths from a source by relaxing every edge, repeated V−1 times. Slower than Dijkstra, but it handles negative edge weights and detects negative cycles — a relaxation on the V-th pass means no shortest path exists.",
+    difficulty: "Advanced",
+    live: true,
+    complexity: [
+      { label: "Time", value: "O(V · E)" },
+      { label: "Space", value: "O(V)" },
+    ],
+    insights: [
+      "After V−1 full passes every shortest path is final (paths have ≤ V−1 edges).",
+      "A relaxation on one more pass exposes a negative cycle.",
+    ],
+    pitfalls: ["Much slower than Dijkstra — only reach for it when edges can be negative."],
+    useCases: ["Negative-weight graphs", "Currency arbitrage", "Routing (RIP protocol)"],
+  },
+  {
+    slug: "prim",
+    title: "Prim's MST",
+    pillar: "algorithms",
+    category: "Graph",
+    tagline: "Grow a minimum spanning tree one edge at a time.",
+    summary:
+      "Prim's algorithm builds a minimum spanning tree by starting from any node and repeatedly adding the cheapest edge that connects the tree to a new vertex. A min-heap over crossing edges makes each choice efficient, yielding the lowest-cost tree that connects every node.",
+    difficulty: "Advanced",
+    live: true,
+    complexity: [
+      { label: "Time", value: "O(E log V)", note: "binary heap" },
+      { label: "Space", value: "O(V + E)" },
+    ],
+    insights: [
+      "The cut property: the cheapest edge crossing any cut is always safe to add.",
+      "Greedy and never backtracks — every added edge stays in the final tree.",
+    ],
+    pitfalls: ["For dense graphs it edges out Kruskal; for sparse ones Kruskal is often simpler."],
+    useCases: ["Network / cable layout", "Clustering", "Approximating TSP"],
+  },
+  {
+    slug: "union-find",
+    title: "Union-Find (DSU)",
+    pillar: "algorithms",
+    category: "Graph",
+    tagline: "Near-constant merge & connectivity checks.",
+    summary:
+      "Disjoint-Set Union tracks elements partitioned into groups, answering 'are these two connected?' and 'merge these groups' in almost O(1) using path compression and union by rank. It's the heart of Kruskal's MST and cycle detection.",
+    difficulty: "Advanced",
+    live: true,
+    complexity: [
+      { label: "Find", value: "O(α(n))", note: "inverse Ackermann ≈ 1" },
+      { label: "Union", value: "O(α(n))" },
+      { label: "Space", value: "O(n)" },
+    ],
+    insights: [
+      "Path compression flattens trees on every find.",
+      "Union by rank attaches the smaller tree under the larger.",
+    ],
+    useCases: ["Kruskal's MST", "Connected components", "Cycle detection"],
   },
   {
     slug: "two-pointers",

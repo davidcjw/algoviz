@@ -563,6 +563,63 @@ def dijkstra(start):
 print(dijkstra("A"))   # => {'A': 0, 'B': 1, 'C': 3, 'D': 4}
 `,
 
+  "bellman-ford": `
+# Bellman-Ford — shortest paths with possible negative edges.
+# edges: list of (u, v, weight); relax all edges V-1 times.
+
+def bellman_ford(nodes, edges, start):
+    dist = {n: float("inf") for n in nodes}
+    dist[start] = 0
+    for _ in range(len(nodes) - 1):
+        changed = False
+        for u, v, w in edges:
+            if dist[u] + w < dist[v]:
+                dist[v] = dist[u] + w
+                changed = True
+        if not changed:
+            break                          # converged early
+    # one more pass: any relaxation ⇒ negative cycle
+    for u, v, w in edges:
+        if dist[u] + w < dist[v]:
+            raise ValueError("negative cycle")
+    return dist
+
+nodes = ["A", "B", "C", "D"]
+edges = [("A", "B", 1), ("B", "C", -2), ("A", "C", 4), ("C", "D", 2)]
+print(bellman_ford(nodes, edges, "A"))   # => {'A': 0, 'B': 1, 'C': -1, 'D': 1}
+`,
+
+  prim: `
+# Prim's MST — grow a tree by always taking the cheapest crossing edge.
+import heapq
+
+graph = {
+    "A": [("B", 4), ("C", 3)],
+    "B": [("A", 4), ("D", 5)],
+    "C": [("A", 3), ("D", 8)],
+    "D": [("B", 5), ("C", 8)],
+}
+
+def prim(start):
+    in_tree = {start}
+    pq = [(w, start, to) for to, w in graph[start]]   # (weight, from, to)
+    heapq.heapify(pq)
+    mst, total = [], 0
+    while pq and len(in_tree) < len(graph):
+        w, a, b = heapq.heappop(pq)
+        if b in in_tree:
+            continue                        # stale — both ends already in
+        in_tree.add(b)
+        mst.append((a, b, w))
+        total += w
+        for to, ww in graph[b]:
+            if to not in in_tree:
+                heapq.heappush(pq, (ww, b, to))
+    return mst, total
+
+print(prim("A"))   # => ([('A', 'C', 3), ('A', 'B', 4), ('B', 'D', 5)], 12)
+`,
+
   "two-pointers": `
 # Two pointers — pair sum in a sorted array, and in-place dedup.
 def two_sum_sorted(arr, target):

@@ -80,6 +80,10 @@ function renderViz(slug: string) {
       return <GraphViz mode="dfs" />;
     case "dijkstra":
       return <GraphViz mode="dijkstra" />;
+    case "prim":
+      return <GraphViz mode="prim" />;
+    case "bellman-ford":
+      return <GraphViz mode="bellman-ford" />;
     case "linear-search":
       return <SearchVisualizer mode="linear" />;
     case "binary-search":
