@@ -58,32 +58,33 @@ export function SortVisualizer({ algorithm }: { algorithm: SortKey }) {
         />
       }
     >
-      <div className="flex h-56 items-end justify-center gap-1 sm:h-64 sm:gap-2">
-        {frame.items.map((item) => {
-          const c = colorFor(item.id);
+      <div className="relative h-56 sm:h-64">
+        {data.map((original) => {
+          const idx = frame.items.findIndex((it) => it.id === original.id);
+          const c = colorFor(original.id);
           const highlighted =
-            frame.compare?.includes(item.id) ||
-            frame.active?.includes(item.id) ||
-            frame.pivot === item.id;
+            frame.compare?.includes(original.id) ||
+            frame.active?.includes(original.id) ||
+            frame.pivot === original.id;
           return (
             <motion.div
-              key={item.id}
-              layout
+              key={original.id}
+              animate={{ left: `${(idx * 100) / data.length}%` }}
               transition={{ type: "spring", stiffness: 600, damping: 38 }}
-              className="relative flex w-5 flex-col items-center justify-end sm:w-9"
-              style={{ height: "100%" }}
+              className="absolute bottom-0 flex h-full flex-col items-center justify-end"
+              style={{ width: `${100 / data.length}%` }}
             >
               <motion.div
-                className="w-full rounded-t-md"
+                className="w-5 rounded-t-md sm:w-9"
                 animate={{
-                  height: `${(item.value / maxVal) * 100}%`,
+                  height: `${(original.value / maxVal) * 100}%`,
                   backgroundColor: c,
                   boxShadow: highlighted ? "0 2px 10px rgba(22,26,34,0.18)" : "none",
                 }}
                 transition={{ duration: 0.25 }}
                 style={{ minHeight: 6 }}
               />
-              <span className="mt-1.5 font-mono text-2xs text-slate-400">{item.value}</span>
+              <span className="mt-1.5 font-mono text-2xs text-slate-400">{original.value}</span>
             </motion.div>
           );
         })}
