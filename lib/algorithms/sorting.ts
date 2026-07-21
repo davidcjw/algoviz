@@ -128,10 +128,9 @@ function insertion(input: SortItem[]): SortFrame[] {
         active: [key.id],
         note: `${a[j].value} > ${key.value} — shift right.`,
       });
-      a[j + 1] = a[j];
+      [a[j], a[j + 1]] = [a[j + 1], a[j]];
       j--;
     }
-    a[j + 1] = key;
     frames.push({
       items: clone(a),
       active: [key.id],
