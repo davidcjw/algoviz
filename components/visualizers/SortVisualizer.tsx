@@ -58,7 +58,12 @@ export function SortVisualizer({ algorithm }: { algorithm: SortKey }) {
         />
       }
     >
-      <div className="relative h-56 sm:h-64">
+      <div
+        className="relative mx-auto h-56 w-full sm:h-64"
+        style={{
+          maxWidth: `clamp(${data.length * 24}px, ${data.length * 5}vw, ${data.length * 44}px)`,
+        }}
+      >
         {data.map((original) => {
           const idx = frame.items.findIndex((it) => it.id === original.id);
           const c = colorFor(original.id);
